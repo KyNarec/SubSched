@@ -14,7 +14,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.kynarec.shared.SubSchedRepository
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 import subsched.composeapp.generated.resources.Res
 import subsched.composeapp.generated.resources.compose_multiplatform
@@ -23,6 +26,25 @@ import subsched.composeapp.generated.resources.compose_multiplatform
 @Preview
 fun App() {
     MaterialTheme {
+        val viewModel: SubSchedViewModel = koinViewModel()
+
+        val uiState by viewModel.state.collectAsState()
+
+        LaunchedEffect(Unit) {
+            viewModel.fetchSchedule()
+        }
+
+        when (val currentState = uiState) {
+            is SubState.Loading -> {
+//                LoadingView()
+            }
+            is SubState.Success -> {
+//                ScheduleContent(plan = currentState.plan)
+            }
+            is SubState.Error -> {
+//                ErrorView(message = currentState.message)
+            }
+        }
         var showContent by remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
