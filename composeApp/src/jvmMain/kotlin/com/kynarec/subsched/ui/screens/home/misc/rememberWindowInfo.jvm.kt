@@ -29,7 +29,7 @@ actual fun rememberWindowInfo(): WindowInfo {
         windowInfoState.value = WindowInfo(
             screenWidthInfo = when {
                 width < 600.dp -> WindowInfo.WindowType.Compact
-                width < 840.dp -> WindowInfo.WindowType.Medium
+                width < 910.dp -> WindowInfo.WindowType.Medium
                 else -> WindowInfo.WindowType.Expanded
             },
             screenHeightInfo = when {

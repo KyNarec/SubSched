@@ -66,10 +66,11 @@ fun MultiPaneHomeLayout(
             LaunchedEffect(Unit) {
                 val oneMinuteInMillis = 60 * 1000
                 val timeSinceLastFetch = Clock.System.now().toEpochMilliseconds() - (schedule?.lastFetched ?: 0L)
-                if (schedule != null && timeSinceLastFetch < oneMinuteInMillis) {
+                if (schedule != null && timeSinceLastFetch < oneMinuteInMillis && !viewModel.refetchPlease) {
                     return@LaunchedEffect
                 } else {
                     viewModel.fetchSchedule()
+                    viewModel.refetchPlease = false
                 }
             }
 
@@ -99,7 +100,7 @@ fun MultiPaneHomeLayout(
             if (schedule != null) {
                 BoxWithConstraints(Modifier.fillMaxSize().padding(16.dp)) {
                     val availableWidth = maxWidth
-                    val minDayWidth = 450.dp
+                    val minDayWidth = 430.dp
                     val spacing = 16.dp
 
                     // (Available + Spacing) / (MinSize + Spacing)

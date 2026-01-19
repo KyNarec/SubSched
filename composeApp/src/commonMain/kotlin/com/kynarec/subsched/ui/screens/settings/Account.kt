@@ -12,10 +12,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.SubState
+import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentSwitch
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,7 +110,8 @@ fun Account(
         )
         {
             LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 item {
                     OutlinedTextField(
@@ -183,7 +187,23 @@ fun Account(
                                 )
                             }
                         }
-
+                    }
+                }
+                item {
+                    Spacer(Modifier.height(24.dp))
+                }
+                item {
+                    ElevatedCard {
+                        SettingComponentSwitch(
+                            icon = Icons.Default.School,
+                            title = "Teachers view",
+                            description = "Otherwise students view is shown",
+                            onCheckedChange = {
+                                viewModel.teacherView = it
+                                viewModel.refetchPlease = true
+                            },
+                            checked = viewModel.teacherView
+                        )
                     }
                 }
             }

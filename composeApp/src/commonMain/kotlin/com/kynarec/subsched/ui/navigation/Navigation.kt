@@ -33,6 +33,9 @@ fun Navigation(
             startDestination = NavRoutes.HomeScreen
         ) {
             composable<NavRoutes.HomeScreen> {
+//                LaunchedEffect(windowInfo) {
+//                    println("Width: ${windowInfo.screenWidth}")
+//                }
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
                     MultiPaneHomeLayout(navController = navController)
                 } else {

@@ -47,10 +47,11 @@ fun HomeScreen(
         LaunchedEffect(Unit) {
             val oneMinuteInMillis = 60 * 1000
             val timeSinceLastFetch = Clock.System.now().toEpochMilliseconds() - (schedule?.lastFetched ?: 0L)
-            if (schedule != null && timeSinceLastFetch < oneMinuteInMillis) {
+            if (schedule != null && timeSinceLastFetch < oneMinuteInMillis && !viewModel.refetchPlease) {
                 return@LaunchedEffect
             } else {
                 viewModel.fetchSchedule()
+                viewModel.refetchPlease = false
             }
         }
 
@@ -68,16 +69,6 @@ fun HomeScreen(
         if (schedule != null) {
             val today = schedule.plan.days[2]
             SubstitutionGrid(today.substitutions, date = today.date)
-//            today.substitutions.forEachIndexed { index, substitution ->
-//                println("=== $index ===")
-//                println(substitution.coveringTeacher.name)
-//                println(substitution.lesson)
-//                println(substitution.className)
-//                println(substitution.absentTeacher.name)
-//                println(substitution.subject)
-//                println(substitution.room)
-//                println(substitution.info)
-//            }
         }
     }
 }
