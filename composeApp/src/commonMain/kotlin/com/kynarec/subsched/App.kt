@@ -14,9 +14,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.kynarec.shared.SubSchedRepository
-import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.koinInject
+import com.kynarec.subsched.ui.Navigation
+import com.kynarec.subsched.ui.theme.SubSchedTheme
 import org.koin.compose.viewmodel.koinViewModel
 
 import subsched.composeapp.generated.resources.Res
@@ -25,10 +26,13 @@ import subsched.composeapp.generated.resources.compose_multiplatform
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        val viewModel: SubSchedViewModel = koinViewModel()
+    SubSchedTheme(
 
+    ) {
+        val viewModel: SubSchedViewModel = koinViewModel()
         val uiState by viewModel.state.collectAsState()
+
+        val navController = rememberNavController()
 
         LaunchedEffect(Unit) {
             viewModel.fetchSchedule()
@@ -45,27 +49,7 @@ fun App() {
 //                ErrorView(message = currentState.message)
             }
         }
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
-        }
+        Navigation(navController)
+
     }
 }
