@@ -14,7 +14,8 @@ class SubSchedRepository(private val client: HttpClient, private val kSafeInstan
         username: String,
         password: String,
         days: Int = 2,
-        type: String = "teacher"
+        type: String = "teacher",
+        news: String = ""
     ): String {
         return try {
             val response = client.get("https://schule-infoportal.de/infoscreen/") {
@@ -25,7 +26,7 @@ class SubSchedRepository(private val client: HttpClient, private val kSafeInstan
                     parameter("days", days.toString())
                     parameter("future", "0")
                     parameter("theme", "light")
-                    parameter("news", "")
+                    parameter("news", news)
                     parameter("ticker", "ende/")
                 }
 

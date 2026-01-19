@@ -31,14 +31,17 @@ class SubSchedViewModel(
             try {
                 val data = repository.fetchTeacherInfo(
                     username = username,
-                    password = password
+                    password = password,
+                    type = "teacher",
+                    news = 1.toString(),
+                    days = 4
                 )
                 if (data.isBlank()) {
                     _state.value = SubState.Error("Invalid credentials")
                     return@launch
                 }
                 val parsedData = parseFullSubstituteSchedule(data)
-                _state.value = SubState.Success(parsedData)
+                _state.value = SubState.Success(parsedData, System.currentTimeMillis())
             } catch (e: Exception) {
                 _state.value = SubState.Error(e.message ?: "Unknown Error")
             }
@@ -53,6 +56,6 @@ class SubSchedViewModel(
 
 sealed class SubState {
     object Loading : SubState()
-    data class Success(val plan: SubstitutionSchedule) : SubState()
+    data class Success(val plan: SubstitutionSchedule, val lastFetched: Long) : SubState()
     data class Error(val message: String) : SubState()
 }

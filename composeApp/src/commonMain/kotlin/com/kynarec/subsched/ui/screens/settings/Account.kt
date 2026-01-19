@@ -59,21 +59,23 @@ fun Account(
 
 
     LaunchedEffect(viewModelState.value) {
-        when (val state = viewModelState.value) {
-            is SubState.Success -> {
-                isCheckingCredentials.value = false
-                snackBarHostState.showSnackbar("Credentials are valid!")
-            }
+        if (confirmButtonClicked.value) {
+            when (val state = viewModelState.value) {
+                is SubState.Success -> {
+                    isCheckingCredentials.value = false
+                    snackBarHostState.showSnackbar("Credentials are valid!")
+                }
 
-            is SubState.Error -> {
-                isCheckingCredentials.value = false
-                snackBarHostState.showSnackbar("Error: ${state.message}")
-            }
+                is SubState.Error -> {
+                    isCheckingCredentials.value = false
+                    snackBarHostState.showSnackbar("Error: ${state.message}")
+                }
 
-            is SubState.Loading -> {
-                isCheckingCredentials.value = true
-                // Usually you show a CircularProgressIndicator in the UI
-                // rather than a Snackbar for loading
+                is SubState.Loading -> {
+                    isCheckingCredentials.value = true
+                    // Usually you show a CircularProgressIndicator in the UI
+                    // rather than a Snackbar for loading
+                }
             }
         }
     }
@@ -146,7 +148,7 @@ fun Account(
                 item {
                     Button(onClick = {
                         viewModel.fetchSchedule()
-                        confirmButtonClicked.value = !confirmButtonClicked.value
+                        confirmButtonClicked.value = true
                     }) {
                         Text("Save & Refresh")
                     }

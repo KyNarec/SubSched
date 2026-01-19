@@ -8,8 +8,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.kynarec.subsched.ui.ScreenWithContent
 import com.kynarec.subsched.ui.screens.home.HomeScreen
+import com.kynarec.subsched.ui.screens.home.MultiPaneHomeLayout
+import com.kynarec.subsched.ui.screens.home.misc.WindowInfo
+import com.kynarec.subsched.ui.screens.home.misc.rememberWindowInfo
 import com.kynarec.subsched.ui.screens.settings.Account
 import com.kynarec.subsched.ui.screens.settings.Appearance
+import com.kynarec.subsched.ui.screens.settings.MultiPaneRootLayout
 import com.kynarec.subsched.ui.screens.settings.Root
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -17,6 +21,7 @@ import com.kynarec.subsched.ui.screens.settings.Root
 fun Navigation(
     navController: NavHostController,
 ) {
+    val windowInfo = rememberWindowInfo()
     NavHost(
         navController = navController,
         startDestination = NavRoutes.MainGraph
@@ -25,8 +30,12 @@ fun Navigation(
             startDestination = NavRoutes.HomeScreen
         ) {
             composable<NavRoutes.HomeScreen> {
-                ScreenWithContent(navController) {
-                    HomeScreen(navController = navController)
+                if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
+                    MultiPaneHomeLayout(navController = navController)
+                } else {
+                    ScreenWithContent(navController) {
+                        HomeScreen(navController = navController)
+                    }
                 }
             }
         }
@@ -35,10 +44,12 @@ fun Navigation(
             startDestination = NavRoutes.Settings.Root
         ) {
             composable<NavRoutes.Settings.Root> {
-                ScreenWithContent(navController) {
-                    Root(
-                        navController = navController
-                    )
+                if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
+                    MultiPaneRootLayout(navController = navController)
+                } else {
+                    ScreenWithContent(navController) {
+                        Root(navController = navController)
+                    }
                 }
             }
 
