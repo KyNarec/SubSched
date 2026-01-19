@@ -67,8 +67,10 @@ kotlin {
                 implementation(libs.bundles.ktor)
 
                 // HTML Parser
-//                implementation("org.jsoup:jsoup:1.22.1")
                 implementation(libs.ksoup)
+
+                implementation(libs.ksafe)
+                implementation(libs.ksafe.compose)
             }
         }
 

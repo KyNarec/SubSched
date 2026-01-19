@@ -6,6 +6,6 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val commonModule: Module = module {
-    single { SubSchedRepository(get()) }
+    single { SubSchedRepository(get(), get()) }
     viewModelOf(::SubSchedViewModel)
 }

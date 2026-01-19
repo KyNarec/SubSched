@@ -16,7 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.kynarec.subsched.ui.navigation.NavRoutes
 
 @Composable
 fun ScreenWithContent(
@@ -25,8 +28,10 @@ fun ScreenWithContent(
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val isSettingsScreen = remember(currentRoute) {
-        currentRoute?.startsWith(NavRoutes.SettingsScreen::class.qualifiedName!!) == true
+    val isSettingsScreen = remember(navBackStackEntry) {
+        navBackStackEntry?.destination?.hierarchy?.any {
+            it.hasRoute<NavRoutes.SettingsGraph>()
+        } == true
     }
 
     val isHomeScreen = remember(currentRoute) {
@@ -53,7 +58,7 @@ fun ScreenWithContent(
 
                 NavigationBarItem(
                     selected = isSettingsScreen,
-                    onClick = { if (!isSettingsScreen) navController.navigate(NavRoutes.SettingsScreen) },
+                    onClick = { if (!isSettingsScreen) navController.navigate(NavRoutes.Settings.Root) },
                     icon = {
                         Icon(
                             Icons.Default.Settings,
@@ -73,7 +78,7 @@ fun ScreenWithContent(
     )
     { paddingValues ->
         Box(Modifier.padding(paddingValues)) {
-            content
+            content()
         }
     }
 }

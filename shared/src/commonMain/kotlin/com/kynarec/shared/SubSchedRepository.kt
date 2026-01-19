@@ -1,5 +1,6 @@
 package com.kynarec.shared
 
+import eu.anifantakis.lib.ksafe.KSafe
 import io.ktor.client.HttpClient
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.get
@@ -7,7 +8,7 @@ import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 
-class SubSchedRepository(private val client: HttpClient) {
+class SubSchedRepository(private val client: HttpClient, private val kSafeInstance: KSafe) {
 
     suspend fun fetchTeacherInfo(
         username: String,
@@ -42,4 +43,7 @@ class SubSchedRepository(private val client: HttpClient) {
             ""
         }
     }
+
+    val kSafe : KSafe
+        get() = kSafeInstance
 }
