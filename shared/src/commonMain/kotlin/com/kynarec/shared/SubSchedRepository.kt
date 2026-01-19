@@ -14,13 +14,46 @@ class SubSchedRepository(private val client: HttpClient, private val kSafeInstan
         username: String,
         password: String,
         days: Int = 2,
-        type: String = "teacher",
         news: String = ""
     ): String {
         return try {
             val response = client.get("https://schule-infoportal.de/infoscreen/") {
                 url {
-                    parameter("type", type)
+                    parameter("type", "teacher")
+                    parameter("refresh", "100")
+                    parameter("fontsize", "18")
+                    parameter("days", days.toString())
+                    parameter("future", "0")
+                    parameter("theme", "light")
+                    parameter("news", news)
+                    parameter("ticker", "ende/")
+                }
+
+                basicAuth(username, password)
+            }
+
+            if (response.status == HttpStatusCode.OK) {
+                response.bodyAsText()
+            } else {
+                println("Request failed with status: ${response.status}")
+                ""
+            }
+        } catch (e: Exception) {
+            println("Network Error: ${e.message}")
+            ""
+        }
+    }
+
+    suspend fun fetchStudentInfo(
+        username: String,
+        password: String,
+        days: Int = 2,
+        news: String = ""
+    ): String {
+        return try {
+            val response = client.get("https://schule-infoportal.de/infoscreen/") {
+                url {
+                    parameter("type", "student")
                     parameter("refresh", "100")
                     parameter("fontsize", "18")
                     parameter("days", days.toString())

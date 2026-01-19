@@ -1,6 +1,9 @@
 package com.kynarec.subsched.ui.navigation
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,8 +16,8 @@ import com.kynarec.subsched.ui.screens.home.misc.WindowInfo
 import com.kynarec.subsched.ui.screens.home.misc.rememberWindowInfo
 import com.kynarec.subsched.ui.screens.settings.Account
 import com.kynarec.subsched.ui.screens.settings.Appearance
-import com.kynarec.subsched.ui.screens.settings.MultiPaneRootLayout
 import com.kynarec.subsched.ui.screens.settings.Root
+import com.kynarec.subsched.ui.screens.settings.multipane.MultiPaneRootLayout
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,9 +57,21 @@ fun Navigation(
             }
 
             composable<NavRoutes.Settings.Account> {
-                Account(
-                    navController = navController
-                )
+                if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
+                    Row(
+                    ) {
+                        MultiPaneRootLayout(navController = navController)
+                        VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Account(
+                            navController = navController
+                        )
+                    }
+                } else {
+                    Account(
+                        navController = navController
+                    )
+                }
+
             }
 
             composable<NavRoutes.Settings.Appearance> {

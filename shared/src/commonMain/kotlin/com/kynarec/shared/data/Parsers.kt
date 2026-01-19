@@ -2,12 +2,12 @@ package com.kynarec.shared.data
 
 import com.fleeksoft.ksoup.Ksoup
 import com.kynarec.shared.data.models.Day
-import com.kynarec.shared.data.models.Teacher
 import com.kynarec.shared.data.models.Messages
 import com.kynarec.shared.data.models.Substitution
 import com.kynarec.shared.data.models.SubstitutionSchedule
+import com.kynarec.shared.data.models.Teacher
 
-fun parseFullSubstituteSchedule(html: String): SubstitutionSchedule {
+fun parseFullTeacherSubstituteSchedule(html: String): SubstitutionSchedule {
     val doc = Ksoup.parse(html)
 
     val dailyContainers = doc.select(".daily_table")

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kynarec.shared.SubSchedRepository
 import com.kynarec.shared.data.models.SubstitutionSchedule
-import com.kynarec.shared.data.parseFullSubstituteSchedule
+import com.kynarec.shared.data.parseFullTeacherSubstituteSchedule
 import eu.anifantakis.lib.ksafe.compose.mutableStateOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,15 +32,14 @@ class SubSchedViewModel(
                 val data = repository.fetchTeacherInfo(
                     username = username,
                     password = password,
-                    type = "teacher",
                     news = 1.toString(),
-                    days = 4
+                    days = 5
                 )
                 if (data.isBlank()) {
                     _state.value = SubState.Error("Invalid credentials")
                     return@launch
                 }
-                val parsedData = parseFullSubstituteSchedule(data)
+                val parsedData = parseFullTeacherSubstituteSchedule(data)
                 _state.value = SubState.Success(parsedData, System.currentTimeMillis())
             } catch (e: Exception) {
                 _state.value = SubState.Error(e.message ?: "Unknown Error")

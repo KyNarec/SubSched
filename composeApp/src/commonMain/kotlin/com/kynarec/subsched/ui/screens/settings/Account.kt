@@ -49,7 +49,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun Account(
     viewModel: SubSchedViewModel = koinViewModel(),
-    navController: NavController
+    navController: NavController,
+    backNavigation: () -> Unit = { navController.popBackStack() }
 ) {
     val viewModelState = viewModel.state.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -85,7 +86,7 @@ fun Account(
             TopAppBar(
                 title = { Text("Account", maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { backNavigation() }) {
                         Icon(
                             Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = "Back"

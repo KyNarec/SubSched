@@ -23,14 +23,15 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun Appearance(
     viewModel: SubSchedViewModel = koinViewModel(),
-    navController: NavController
+    navController: NavController,
+    backNavigation: () -> Unit = { navController.popBackStack() }
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Appearance", maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { backNavigation() }) {
                         Icon(
                             Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = "Back"
