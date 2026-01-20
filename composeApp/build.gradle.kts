@@ -8,9 +8,15 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlin.serialization)
+//    alias(libs.plugins.androidKotlinMultiplatformLibrary) Will replace alias(libs.plugins.androidApplication)
 }
 
 kotlin {
+//    androidLibrary {
+//        androidResources {
+//            enable = true
+//        }
+//    }
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -71,7 +77,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = libs.versions.app.version.get()
     }
     packaging {
         packaging {
@@ -82,15 +88,62 @@ android {
             }
         }
     }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("KEYSTORE_FILE")
+            if (keystorePath != null) {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            }
         }
     }
+
+    buildTypes {
+        // build with ./gradlew assembleRelease
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            manifestPlaceholders["appName"] = "SubSched"
+            if (System.getenv("CI") == "true" && System.getenv("KEYSTORE_FILE") == null) {
+                error("Release keystore not configured")
+            }
+            if (System.getenv("KEYSTORE_FILE") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    buildFeatures{
+        compose = true
+        buildConfig = true
+        dataBinding {
+            enable = true
+        }
+    }
+    applicationVariants.all {
+        outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            output.outputFileName = "SubSched_v${libs.versions.app.version.get()}.apk"
+        }
+    }
+
 }
 
 dependencies {
@@ -104,7 +157,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.kynarec.subsched"
-            packageVersion = "1.0.0"
+            packageVersion = libs.versions.app.version.get()
         }
     }
 }
