@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 
 @Composable
 fun SettingComponentSwitch(
@@ -29,7 +28,8 @@ fun SettingComponentSwitch(
     title: String,
     description: String,
     onCheckedChange: ((Boolean) -> Unit),
-    checked: Boolean = false
+    checked: Boolean = false,
+    enabled: Boolean = true
 ) {
     var checked by remember { mutableStateOf(checked) }
     val scope = rememberCoroutineScope()
@@ -74,7 +74,8 @@ fun SettingComponentSwitch(
                 checked = it
                 onCheckedChange(it)
             },
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp),
+            enabled = enabled
         )
     }
 }

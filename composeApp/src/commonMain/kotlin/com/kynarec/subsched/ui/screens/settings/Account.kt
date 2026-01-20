@@ -202,7 +202,8 @@ fun Account(
                                 viewModel.teacherView = it
                                 viewModel.refetchPlease = true
                             },
-                            checked = viewModel.teacherView
+                            checked = viewModel.teacherView,
+                            enabled = !(viewModel.username.isBlank() || viewModel.password.isBlank())
                         )
                     }
                 }

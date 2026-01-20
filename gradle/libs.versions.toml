@@ -29,7 +29,7 @@ ksafeCompose = "1.3.0"
 koin-bom = "4.1.1"
 
 ktor="3.3.3"
-logback="1.5.25"
+logback="1.4.14"
 ksoup = "0.2.5"
 
 [libraries]

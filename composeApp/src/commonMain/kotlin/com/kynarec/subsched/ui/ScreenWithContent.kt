@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -37,6 +39,12 @@ fun ScreenWithContent(
     val isHomeScreen = remember(currentRoute) {
         currentRoute?.startsWith(NavRoutes.HomeScreen::class.qualifiedName!!) == true
     }
+    val isTomorrowScreen = remember(currentRoute) {
+        currentRoute?.startsWith(NavRoutes.TomorrowScreen::class.qualifiedName!!) == true
+    }
+    val isNewsScreen = remember(currentRoute) {
+        currentRoute?.startsWith(NavRoutes.NewsScreen::class.qualifiedName!!) == true
+    }
     Scaffold(
         bottomBar = {
             NavigationBar {
@@ -50,6 +58,38 @@ fun ScreenWithContent(
                     label = {
                         Text(
                             "Home",
+                            fontSize = 12.sp,
+                            lineHeight = 12.sp
+                        )
+                    }
+                )
+
+                NavigationBarItem(
+                    selected = isTomorrowScreen,
+                    onClick = { if (!isTomorrowScreen) navController.navigate(NavRoutes.TomorrowScreen) },
+                    icon = { Icon(
+                        Icons.Default.Today,
+                        contentDescription = "Tomorrow"
+                    ) },
+                    label = {
+                        Text(
+                            "Tomorrow",
+                            fontSize = 12.sp,
+                            lineHeight = 12.sp
+                        )
+                    }
+                )
+
+                NavigationBarItem(
+                    selected = isNewsScreen,
+                    onClick = { if (!isNewsScreen) navController.navigate(NavRoutes.NewsScreen) },
+                    icon = { Icon(
+                        Icons.Default.Newspaper,
+                        contentDescription = "News"
+                    ) },
+                    label = {
+                        Text(
+                            "News",
                             fontSize = 12.sp,
                             lineHeight = 12.sp
                         )

@@ -5,6 +5,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,10 +15,12 @@ import com.kynarec.subsched.ui.screens.home.HomeScreen
 import com.kynarec.subsched.ui.screens.home.MultiPaneHomeLayout
 import com.kynarec.subsched.ui.screens.home.misc.WindowInfo
 import com.kynarec.subsched.ui.screens.home.misc.rememberWindowInfo
+import com.kynarec.subsched.ui.screens.news.NewsScreen
 import com.kynarec.subsched.ui.screens.settings.Account
 import com.kynarec.subsched.ui.screens.settings.Appearance
 import com.kynarec.subsched.ui.screens.settings.Root
 import com.kynarec.subsched.ui.screens.settings.multipane.MultiPaneRootLayout
+import com.kynarec.subsched.ui.screens.tomorrow.TomorrowScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,9 +36,10 @@ fun Navigation(
             startDestination = NavRoutes.HomeScreen
         ) {
             composable<NavRoutes.HomeScreen> {
-//                LaunchedEffect(windowInfo) {
-//                    println("Width: ${windowInfo.screenWidth}")
-//                }
+                LaunchedEffect(windowInfo) {
+                    println("Width: ${windowInfo.screenWidth}")
+                    println("Height: ${windowInfo.screenHeight}")
+                }
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
                     MultiPaneHomeLayout(navController = navController)
                 } else {
@@ -44,6 +48,27 @@ fun Navigation(
                     }
                 }
             }
+
+            composable<NavRoutes.TomorrowScreen> {
+                if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
+                    MultiPaneHomeLayout(navController = navController)
+                } else {
+                    ScreenWithContent(navController) {
+                        TomorrowScreen()
+                    }
+                }
+            }
+
+            composable<NavRoutes.NewsScreen> {
+                if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
+                    MultiPaneHomeLayout(navController = navController)
+                } else {
+                    ScreenWithContent(navController) {
+                        NewsScreen()
+                    }
+                }
+            }
+
         }
 
         navigation<NavRoutes.SettingsGraph>(

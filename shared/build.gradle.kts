@@ -63,7 +63,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
-                implementation(libs.logback)
+//                implementation(libs.logback)
                 implementation(libs.bundles.ktor)
 
                 // HTML Parser

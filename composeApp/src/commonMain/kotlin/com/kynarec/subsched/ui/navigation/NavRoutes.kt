@@ -12,6 +12,12 @@ sealed class NavRoutes {
     data object HomeScreen : NavRoutes()
 
     @Serializable
+    data object TomorrowScreen : NavRoutes()
+
+    @Serializable
+    data object NewsScreen : NavRoutes()
+
+    @Serializable
     sealed class Settings {
         @Serializable
         data object Root : Settings()

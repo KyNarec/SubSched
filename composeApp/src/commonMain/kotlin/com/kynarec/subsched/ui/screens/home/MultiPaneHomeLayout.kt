@@ -3,9 +3,11 @@ package com.kynarec.subsched.ui.screens.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -27,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.SubState
 import com.kynarec.subsched.ui.navigation.NavRoutes
+import com.kynarec.subsched.ui.screens.home.misc.MessagesCard
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.Clock
 
@@ -35,7 +38,7 @@ import kotlin.time.Clock
 fun MultiPaneHomeLayout(
     navController: NavHostController,
     viewModel: SubSchedViewModel = koinViewModel()
-){
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -65,7 +68,8 @@ fun MultiPaneHomeLayout(
 
             LaunchedEffect(Unit) {
                 val oneMinuteInMillis = 60 * 1000
-                val timeSinceLastFetch = Clock.System.now().toEpochMilliseconds() - (schedule?.lastFetched ?: 0L)
+                val timeSinceLastFetch =
+                    Clock.System.now().toEpochMilliseconds() - (schedule?.lastFetched ?: 0L)
                 if (schedule != null && timeSinceLastFetch < oneMinuteInMillis && !viewModel.refetchPlease) {
                     return@LaunchedEffect
                 } else {
@@ -85,16 +89,34 @@ fun MultiPaneHomeLayout(
             }
 
             if (viewModelState.value as? SubState.Error != null) {
-                Row(
-                    Modifier.fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Text("Error fetching Substitute Schedule",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.error
-                    )
+                Column(
+                    Modifier.fillMaxSize()
+                        .align(Alignment.TopCenter),
+                    ) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        Text(
+                            "Error fetching",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        Text(
+                            "Maybe credentials are empty",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
+
             }
 
             if (schedule != null) {
@@ -103,22 +125,33 @@ fun MultiPaneHomeLayout(
                     val minDayWidth = 430.dp
                     val spacing = 16.dp
 
-                    // (Available + Spacing) / (MinSize + Spacing)
-                    val columns = ( (availableWidth + spacing) / (minDayWidth + spacing) ).toInt().coerceAtLeast(1)
+                    val totalSlots = ((availableWidth + spacing) / (minDayWidth + spacing))
+                        .toInt()
+                        .coerceAtLeast(1)
 
-                    val visibleDays = schedule.plan.days.take(columns)
 
+                    val gridColumns = if (totalSlots > 1) totalSlots - 1 else 0
+
+                    schedule.plan.messages.messages.forEach {
+                        println(it)
+                    }
                     Row(
                         modifier = Modifier.fillMaxSize(),
                         horizontalArrangement = Arrangement.spacedBy(spacing)
                     ) {
-                        visibleDays.forEach { day ->
-                            Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                                SubstitutionGrid(
-                                    substitutions = day.substitutions,
-                                    date = day.date
-                                )
+                        if (gridColumns > 0) {
+                            val visibleDays = schedule.plan.days.take(gridColumns)
+                            visibleDays.forEach { day ->
+                                Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                                    SubstitutionGrid(
+                                        substitutions = day.substitutions,
+                                        date = day.date
+                                    )
+                                }
                             }
+                        }
+                        Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                            MessagesCard(schedule.plan.messages)
                         }
                     }
                 }
