@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=@version@
+Type=Application
+Name=SubSched
+Comment=A Compose Multiplatform app to fetch substitute schedules from schule-infoportal.de.
+Exec=/opt/subsched/bin/SubSched
+Icon=subsched_logo
+Terminal=false
+Categories=Utility;Application;
+StartupWMClass=com-kynarec-subsched-MainKt

@@ -172,6 +172,11 @@ compose.desktop {
                 menu = true
                 shortcut = true
                 upgradeUuid = "ca7f9644-9275-405a-9083-258cd7196070"
+                iconFile.set(project.file("src/commonMain/composeResources/files/subsched_icon.ico"))
+
+            }
+            linux {
+                iconFile.set(project.file("src/commonMain/composeResources/drawable/subsched_logo.png"))
             }
         }
     }
