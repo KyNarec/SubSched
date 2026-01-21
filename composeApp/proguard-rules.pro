@@ -21,6 +21,9 @@
 #-renamesourcefileattribute SourceFile
 
 -dontobfuscate
+-dontwarn java.lang.management.ManagementFactory
+-dontwarn java.lang.management.RuntimeMXBean
+
 
 # KTOR
 # Keep Ktor classes for the Local Connect feature.
