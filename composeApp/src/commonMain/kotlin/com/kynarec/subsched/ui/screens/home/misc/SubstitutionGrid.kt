@@ -1,9 +1,16 @@
 package com.kynarec.subsched.ui.screens.home.misc
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +20,49 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kynarec.shared.data.models.Substitution
 
+
+@Composable
+fun SubstitutionGrid(substitutions: List<Substitution>, date: String) {
+    SelectionContainer {
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            )
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(date,
+                    modifier = Modifier.padding(8.dp),
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(vertical = 12.dp, horizontal = 8.dp)
+                ) {
+                    HeaderText("Std.", Modifier.weight(0.6f))
+                    HeaderText("Kl.", Modifier.weight(0.8f))
+                    HeaderText("Ver.", Modifier.weight(1.2f))
+                    HeaderText("Raum", Modifier.weight(0.8f))
+                    HeaderText("Info", Modifier.weight(1.5f))
+                }
+
+                LazyColumn {
+                    items(substitutions) { item ->
+                        SubstitutionRow(item)
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(
+                                alpha = 0.5f
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 @Composable
 fun SubstitutionRow(item: Substitution) {
     Row(
