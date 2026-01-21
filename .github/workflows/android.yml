@@ -61,5 +61,5 @@ jobs:
           name: ${{ github.event.inputs.version }}
           draft: true
           prerelease: false
-          files: app/build/outputs/apk/release/SubSched_v*.apk
+          files: composeApp/build/outputs/apk/release/SubSched_v*.apk
           token: ${{ github.token }}
