@@ -1,5 +1,10 @@
 package com.kynarec.subsched.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +40,24 @@ fun Navigation(
         navigation<NavRoutes.MainGraph>(
             startDestination = NavRoutes.HomeScreen
         ) {
-            composable<NavRoutes.HomeScreen> {
+            composable<NavRoutes.HomeScreen> (
+                enterTransition = {
+                    slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(350)) +
+                            fadeIn(animationSpec = tween(350))
+                },
+                exitTransition = {
+                    slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(350)) +
+                            fadeOut(animationSpec = tween(350))
+                },
+                popEnterTransition = {
+                    slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(350)) +
+                            fadeIn(animationSpec = tween(350))
+                },
+                popExitTransition = {
+                    slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(350)) +
+                            fadeOut(animationSpec = tween(350))
+                }
+            ){
                 LaunchedEffect(windowInfo) {
                     println("Width: ${windowInfo.screenWidth}")
                     println("Height: ${windowInfo.screenHeight}")
@@ -74,7 +96,24 @@ fun Navigation(
         navigation<NavRoutes.SettingsGraph>(
             startDestination = NavRoutes.Settings.Root
         ) {
-            composable<NavRoutes.Settings.Root> {
+            composable<NavRoutes.Settings.Root>(
+                enterTransition = {
+                    slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(350)) +
+                            fadeIn(animationSpec = tween(350))
+                },
+                exitTransition = {
+                    slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(350)) +
+                            fadeOut(animationSpec = tween(350))
+                },
+                popEnterTransition = {
+                    slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(350)) +
+                            fadeIn(animationSpec = tween(350))
+                },
+                popExitTransition = {
+                    slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(350)) +
+                            fadeOut(animationSpec = tween(350))
+                }
+            ) {
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
                     MultiPaneRootLayout(navController = navController)
                 } else {
@@ -84,7 +123,24 @@ fun Navigation(
                 }
             }
 
-            composable<NavRoutes.Settings.Account> {
+            composable<NavRoutes.Settings.Account>(
+                enterTransition = {
+                    slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(350)) +
+                            fadeIn(animationSpec = tween(350))
+                },
+                exitTransition = {
+                    slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(350)) +
+                            fadeOut(animationSpec = tween(350))
+                },
+                popEnterTransition = {
+                    slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(350)) +
+                            fadeIn(animationSpec = tween(350))
+                },
+                popExitTransition = {
+                    slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(350)) +
+                            fadeOut(animationSpec = tween(350))
+                }
+            ) {
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
                     Row(
                     ) {
@@ -102,7 +158,25 @@ fun Navigation(
 
             }
 
-            composable<NavRoutes.Settings.Appearance> {
+            composable<NavRoutes.Settings.Appearance>(
+                enterTransition = {
+                    slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(350)) +
+                            fadeIn(animationSpec = tween(350))
+                },
+                exitTransition = {
+                    slideOutHorizontally(targetOffsetX = { -it }, animationSpec = tween(350)) +
+                            fadeOut(animationSpec = tween(350))
+                },
+                popEnterTransition = {
+                    slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(350)) +
+                            fadeIn(animationSpec = tween(350))
+                },
+                popExitTransition = {
+                    slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(350)) +
+                            fadeOut(animationSpec = tween(350))
+                }
+            )
+            {
                 Appearance(
                     navController = navController
                 )
