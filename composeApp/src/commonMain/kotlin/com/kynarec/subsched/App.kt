@@ -143,7 +143,9 @@ fun App() {
             }
         ) { contentPadding ->
             Box(Modifier.fillMaxSize().padding(contentPadding))
-            Navigation(navController, windowInfo = windowInfo)
+            {
+                Navigation(navController, windowInfo = windowInfo)
+            }
         }
     }
 }
