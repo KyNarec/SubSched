@@ -132,9 +132,6 @@ fun MultiPaneHomeLayout(
 
                     val gridColumns = if (totalSlots > 1) totalSlots - 1 else 0
 
-                    schedule.plan.messages.messages.forEach {
-                        println(it)
-                    }
                     Row(
                         modifier = Modifier.fillMaxSize(),
                         horizontalArrangement = Arrangement.spacedBy(spacing)
