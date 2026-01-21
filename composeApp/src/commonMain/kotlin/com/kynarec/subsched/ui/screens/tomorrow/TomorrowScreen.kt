@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.SubState
-import com.kynarec.subsched.ui.screens.home.SubstitutionGrid
+import com.kynarec.subsched.ui.screens.home.misc.SubstitutionGrid
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.Clock
 

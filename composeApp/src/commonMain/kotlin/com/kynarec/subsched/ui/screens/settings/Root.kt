@@ -24,7 +24,7 @@ import com.kynarec.subsched.ui.screens.settings.misc.SettingsFolder
 fun Root(
     navController: NavHostController
 ) {
-    Box(Modifier.fillMaxSize() )
+    Box(Modifier.fillMaxSize().padding(top = 8.dp) )
     {
         Column {
             LazyColumn(

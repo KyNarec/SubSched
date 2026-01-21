@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -44,14 +46,15 @@ fun MessagesCard(messages: Messages) {
                 ) {
                     HeaderText("Mitteilungen der Schulleitung", Modifier.fillMaxWidth())
                 }
+                LazyColumn {
+                    itemsIndexed(messages.messages) { index, message ->
+                        MessageRow(message)
 
-                messages.messages.forEachIndexed { index, message ->
-                    MessageRow(message)
-
-                    if (index < messages.messages.size - 1) {
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                        )
+                        if (index < messages.messages.size - 1) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
+                        }
                     }
                 }
             }

@@ -30,6 +30,7 @@ import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.SubState
 import com.kynarec.subsched.ui.navigation.NavRoutes
 import com.kynarec.subsched.ui.screens.home.misc.MessagesCard
+import com.kynarec.subsched.ui.screens.home.misc.SubstitutionGrid
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.Clock
 
