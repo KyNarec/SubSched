@@ -103,19 +103,19 @@ android {
     buildTypes {
         // build with ./gradlew assembleRelease
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+////            isMinifyEnabled = false
+////            isShrinkResources = true
             manifestPlaceholders["appName"] = "SubSched"
-            if (System.getenv("CI") == "true" && System.getenv("KEYSTORE_FILE") == null) {
-                error("Release keystore not configured")
-            }
-            if (System.getenv("KEYSTORE_FILE") != null) {
-                signingConfig = signingConfigs.getByName("release")
-            }
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+//            if (System.getenv("CI") == "true" && System.getenv("KEYSTORE_FILE") == null) {
+//                error("Release keystore not configured")
+//            }
+//            if (System.getenv("KEYSTORE_FILE") != null) {
+//                signingConfig = signingConfigs.getByName("release")
+//            }
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
         }
     }
     dependenciesInfo {

@@ -6,12 +6,15 @@ import com.kynarec.shared.SubSchedRepository
 import com.kynarec.shared.data.models.SubstitutionSchedule
 import com.kynarec.shared.data.parseFullStudentSubstituteSchedule
 import com.kynarec.shared.data.parseFullTeacherSubstituteSchedule
+import com.kynarec.subsched.ui.navigation.TransitionEffect
 import eu.anifantakis.lib.ksafe.compose.mutableStateOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 const val DARK_THEME_KEY = "darkTheme"
+const val TRANSITION_EFFECT_KEY = "transitionEffectKey"
+val DEFAULT_TRANSITION_EFFECT = TransitionEffect.SlideHorizontal
 
 class SubSchedViewModel(
     private val repository: SubSchedRepository,
@@ -38,6 +41,11 @@ class SubSchedViewModel(
     var darkThemeFlow = kSafe.getFlow(DARK_THEME_KEY, defaultValue = true)
     var darkThemeDefault by kSafe.mutableStateOf(true)
 
+    var transitionEffect by kSafe.mutableStateOf(DEFAULT_TRANSITION_EFFECT, TRANSITION_EFFECT_KEY)
+    val transitionEffectFlow = kSafe.getFlow(TRANSITION_EFFECT_KEY, DEFAULT_TRANSITION_EFFECT)
+    suspend fun putTransitionEffect(value: TransitionEffect) {
+        kSafe.put(TRANSITION_EFFECT_KEY, value)
+    }
 
     fun fetchSchedule() {
         viewModelScope.launch {
