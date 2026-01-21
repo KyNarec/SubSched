@@ -13,14 +13,14 @@
 ### Linux
 #### Ubuntu/Debian/Mint
 ```bash
-sudo dpkg -i composeApp/build/dist/SubSched_*_amd64_custom.deb
+sudo dpkg -i SubSched_*_amd64_custom.deb
 ```
 #### Arch
 ```bash
-sudo pacman -U composeApp/build/dist/SubSched-*.pkg.tar.zst
+sudo pacman -U SubSched-*.pkg.tar.zst
 ```
 ### Android
-Download and install SubSched_v*.apk from [GitHub Releases](https://github.com/KyNarec/SubSched/releases)
+Download and install SubSched_v*.apk from [latest GitHub release](https://github.com/KyNarec/SubSched/releases/latest)
 
 ### MacOS
 Currently there is no official build for MacOS, but you can simply clone the project, run
@@ -28,6 +28,9 @@ Currently there is no official build for MacOS, but you can simply clone the pro
 ./gradlew packageReleaseDistributionForCurrentOS
 ```
 and you will get a .dmg file.
+
+### Windows
+Download and install SubSched-*.msi from [latest GitHub releases](https://github.com/KyNarec/SubSched/releases/latest)
 
 ---
 
