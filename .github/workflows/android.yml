@@ -46,7 +46,7 @@ jobs:
 
       - name: Verify APK output
         run: |
-          ls -lh app/build/outputs/apk/release
+          ls -lh composeApp/build/outputs/apk/release
 
       - name: Upload release APK
         uses: actions/upload-artifact@v4
