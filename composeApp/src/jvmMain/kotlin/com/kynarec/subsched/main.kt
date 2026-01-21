@@ -7,6 +7,7 @@ import androidx.compose.ui.window.rememberWindowState
 import org.jetbrains.compose.resources.painterResource
 import subsched.composeapp.generated.resources.Res
 import subsched.composeapp.generated.resources.ic_subsched_logo
+import java.io.File
 
 fun main() {
     initKoin()

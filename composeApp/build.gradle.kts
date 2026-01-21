@@ -17,12 +17,14 @@ kotlin {
 //            enable = true
 //        }
 //    }
+    jvmToolchain(21)
+
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_21)
         }
     }
-    
+
     jvm()
     
     sourceSets {
@@ -103,19 +105,19 @@ android {
     buildTypes {
         // build with ./gradlew assembleRelease
         release {
-////            isMinifyEnabled = false
-////            isShrinkResources = true
+            isMinifyEnabled = true
+            isShrinkResources = true
             manifestPlaceholders["appName"] = "SubSched"
-//            if (System.getenv("CI") == "true" && System.getenv("KEYSTORE_FILE") == null) {
-//                error("Release keystore not configured")
-//            }
-//            if (System.getenv("KEYSTORE_FILE") != null) {
-//                signingConfig = signingConfigs.getByName("release")
-//            }
-//            proguardFiles(
-//                getDefaultProguardFile("proguard-android-optimize.txt"),
-//                "proguard-rules.pro"
-//            )
+            if (System.getenv("CI") == "true" && System.getenv("KEYSTORE_FILE") == null) {
+                error("Release keystore not configured")
+            }
+            if (System.getenv("KEYSTORE_FILE") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     dependenciesInfo {
@@ -150,14 +152,27 @@ dependencies {
     debugImplementation(libs.ui.tooling)
 }
 
+// ./gradlew packageReleaseDistributionForCurrentOS
 compose.desktop {
     application {
         mainClass = "com.kynarec.subsched.MainKt"
 
+        buildTypes.release.proguard {
+            optimize.set(true)
+            configurationFiles.from(project.file("proguard-rules.pro"))
+            obfuscate.set(true)
+        }
+
         nativeDistributions {
+            modules("java.base", "java.desktop", "jdk.unsupported", "java.scripting")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.kynarec.subsched"
+            packageName = "SubSched"
             packageVersion = libs.versions.app.version.get()
+            windows {
+                menu = true
+                shortcut = true
+                upgradeUuid = "ca7f9644-9275-405a-9083-258cd7196070"
+            }
         }
     }
 }
