@@ -13,6 +13,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -63,6 +65,7 @@ fun App() {
             currentRoute?.startsWith(NavRoutes.NewsScreen::class.qualifiedName!!) == true
         }
         val windowInfo = rememberWindowInfo()
+        val snackBarHostState = remember { SnackbarHostState() }
         Scaffold(
             bottomBar = {
                 if (windowInfo.screenWidthInfo != WindowInfo.WindowType.Expanded) {
@@ -140,11 +143,14 @@ fun App() {
                         )
                     }
                 }
+            },
+            snackbarHost = {
+                SnackbarHost(hostState = snackBarHostState)
             }
         ) { contentPadding ->
             Box(Modifier.fillMaxSize().padding(contentPadding))
             {
-                Navigation(navController, windowInfo = windowInfo)
+                Navigation(navController, windowInfo = windowInfo, snackBarHostState = snackBarHostState)
             }
         }
     }

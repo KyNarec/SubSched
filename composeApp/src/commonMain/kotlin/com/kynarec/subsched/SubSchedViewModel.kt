@@ -22,6 +22,9 @@ class SubSchedViewModel(
     private val _state = MutableStateFlow<SubState>(SubState.Loading)
     val state: StateFlow<SubState> = _state
 
+    private val _lastSuccessfulFetch = MutableStateFlow<SubState>(SubState.Loading)
+    val lastSuccessfulFetch: StateFlow<SubState> = _lastSuccessfulFetch
+
     val kSafe = repository.kSafe
     var isFirstLaunch by kSafe.mutableStateOf(defaultValue = true)
 
@@ -68,6 +71,11 @@ class SubSchedViewModel(
                             return@launch
                         }
                         val parsedData = parseFullTeacherSubstituteSchedule(data)
+                        if (_state.value is SubState.Success) {
+                            _lastSuccessfulFetch.value = _state.value
+                        } else {
+                            _lastSuccessfulFetch.value = SubState.Success(parsedData, System.currentTimeMillis())
+                        }
                         _state.value = SubState.Success(parsedData, System.currentTimeMillis())
                     }
                     false -> {
@@ -82,11 +90,17 @@ class SubSchedViewModel(
                             return@launch
                         }
                         val parsedData = parseFullStudentSubstituteSchedule(data)
+                        if (_state.value is SubState.Success) {
+                            _lastSuccessfulFetch.value = _state.value
+                        } else {
+                            _lastSuccessfulFetch.value = SubState.Success(parsedData, System.currentTimeMillis())
+                        }
                         _state.value = SubState.Success(parsedData, System.currentTimeMillis())
                     }
                 }
             } catch (e: Exception) {
                 _state.value = SubState.Error(e.message ?: "Unknown Error")
+                println(e.message)
             }
         }
     }

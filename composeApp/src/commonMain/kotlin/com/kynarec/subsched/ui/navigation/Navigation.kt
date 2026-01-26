@@ -15,6 +15,7 @@ import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +45,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun Navigation(
     navController: NavHostController,
     windowInfo: WindowInfo = rememberWindowInfo(),
+    snackBarHostState: SnackbarHostState,
     viewModel: SubSchedViewModel = koinViewModel()
 ) {
     val transitionEffect by viewModel.transitionEffectFlow.collectAsStateWithLifecycle(viewModel.transitionEffect)
@@ -145,30 +147,30 @@ fun Navigation(
                     println("Height: ${windowInfo.screenHeight}")
                 }
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
-                    MultiPaneHomeLayout(navController = navController)
+                    MultiPaneHomeLayout(navController = navController, snackBarHostState = snackBarHostState)
                 } else {
                     ScreenWithContent(navController) {
-                        HomeScreen(navController = navController)
+                        HomeScreen(navController = navController, snackBarHostState = snackBarHostState)
                     }
                 }
             }
 
             composable<NavRoutes.TomorrowScreen> {
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
-                    MultiPaneHomeLayout(navController = navController)
+                    MultiPaneHomeLayout(navController = navController, snackBarHostState = snackBarHostState)
                 } else {
                     ScreenWithContent(navController) {
-                        TomorrowScreen()
+                        TomorrowScreen(snackBarHostState = snackBarHostState)
                     }
                 }
             }
 
             composable<NavRoutes.NewsScreen> {
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
-                    MultiPaneHomeLayout(navController = navController)
+                    MultiPaneHomeLayout(navController = navController, snackBarHostState = snackBarHostState)
                 } else {
                     ScreenWithContent(navController) {
-                        NewsScreen()
+                        NewsScreen(snackBarHostState = snackBarHostState)
                     }
                 }
             }
