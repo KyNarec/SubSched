@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -17,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -38,6 +41,7 @@ import kotlin.time.Clock
 @Composable
 fun MultiPaneHomeLayout(
     navController: NavHostController,
+    snackBarHostState: SnackbarHostState,
     viewModel: SubSchedViewModel = koinViewModel()
 ) {
     Scaffold(
@@ -64,6 +68,7 @@ fun MultiPaneHomeLayout(
                 .padding(contentPadding)
         ) {
             val viewModelState = viewModel.state.collectAsStateWithLifecycle()
+            val viewModelLastSuccessfulState = viewModel.lastSuccessfulFetch.collectAsStateWithLifecycle()
 
             val schedule = viewModelState.value as? SubState.Success
 
@@ -74,8 +79,16 @@ fun MultiPaneHomeLayout(
                 if (schedule != null && timeSinceLastFetch < oneMinuteInMillis && !viewModel.refetchPlease) {
                     return@LaunchedEffect
                 } else {
+                    println("Refetching")
                     viewModel.fetchSchedule()
                     viewModel.refetchPlease = false
+                }
+            }
+
+            LaunchedEffect(viewModelState.value) {
+                if (viewModelState.value as? SubState.Error != null) {
+                    snackBarHostState.showSnackbar("Error fetching, using last successful fetch")
+                    println("Error fetching, using last successful fetch")
                 }
             }
 
@@ -87,37 +100,6 @@ fun MultiPaneHomeLayout(
                 ) {
                     CircularProgressIndicator()
                 }
-            }
-
-            if (viewModelState.value as? SubState.Error != null) {
-                Column(
-                    Modifier.fillMaxSize()
-                        .align(Alignment.TopCenter),
-                    ) {
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Text(
-                            "Error fetching",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Text(
-                            "Maybe credentials are empty",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-
             }
 
             if (schedule != null) {
@@ -150,6 +132,74 @@ fun MultiPaneHomeLayout(
                         }
                         Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                             MessagesCard(schedule.plan.messages)
+                        }
+                    }
+                }
+            }
+
+            if (viewModelState.value as? SubState.Error != null) {
+                if (viewModelLastSuccessfulState.value as? SubState.Success != null) {
+                    println("using last successful fetch")
+
+                    val schedule = (viewModelLastSuccessfulState.value as SubState.Success)
+                    BoxWithConstraints(Modifier.fillMaxSize().padding(16.dp)) {
+                        val availableWidth = maxWidth
+                        val minDayWidth = 430.dp
+                        val spacing = 16.dp
+
+                        val totalSlots = ((availableWidth + spacing) / (minDayWidth + spacing))
+                            .toInt()
+                            .coerceAtLeast(1)
+
+
+                        val gridColumns = if (totalSlots > 1) totalSlots - 1 else 0
+
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.spacedBy(spacing)
+                        ) {
+                            if (gridColumns > 0) {
+                                val visibleDays = schedule.plan.days.take(gridColumns)
+                                visibleDays.forEach { day ->
+                                    Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                                        SubstitutionGrid(
+                                            substitutions = day.substitutions,
+                                            date = day.date
+                                        )
+                                    }
+                                }
+                            }
+                            Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+                                MessagesCard(schedule.plan.messages)
+                            }
+                        }
+                    }
+                } else {
+                    Column(
+                        Modifier.fillMaxSize()
+                    ) {
+                        Spacer(Modifier.height(8.dp))
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            Text(
+                                "Error fetching",
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            Text(
+                                "Maybe credentials are empty",
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
                 }

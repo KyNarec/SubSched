@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +25,8 @@ import kotlin.time.Clock
 
 @Composable
 fun NewsScreen(
-    viewModel: SubSchedViewModel = koinViewModel()
+    viewModel: SubSchedViewModel = koinViewModel(),
+    snackBarHostState: SnackbarHostState
 ) {
     Column(
         Modifier.fillMaxSize(),
@@ -32,6 +34,7 @@ fun NewsScreen(
         verticalArrangement = Arrangement.Top
     ) {
         val viewModelState = viewModel.state.collectAsStateWithLifecycle()
+        val viewModelLastSuccessfulState = viewModel.lastSuccessfulFetch.collectAsStateWithLifecycle()
 
         val schedule = viewModelState.value as? SubState.Success
 
@@ -46,6 +49,12 @@ fun NewsScreen(
             }
         }
 
+        LaunchedEffect(viewModelState.value) {
+            if (viewModelState.value as? SubState.Error != null) {
+                snackBarHostState.showSnackbar("Error fetching, using last successful fetch")
+                println("Error fetching, using last successful fetch")
+            }
+        }
 
         if (viewModelState.value == SubState.Loading) {
             Row(
@@ -57,40 +66,45 @@ fun NewsScreen(
             }
         }
 
-        if (viewModelState.value as? SubState.Error != null) {
-            Column(
-                Modifier.fillMaxSize()
-            ) {
-                Spacer(Modifier.height(8.dp))
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        "Error fetching",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        "Maybe credentials are empty",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-
-        }
-
         if (schedule != null) {
             val today = schedule.plan.messages
             MessagesCard(today)
+        }
+
+        if (viewModelState.value as? SubState.Error != null) {
+            if (viewModelLastSuccessfulState.value as? SubState.Success != null) {
+                println("using last successful fetch")
+                val today = (viewModelLastSuccessfulState.value as SubState.Success).plan.messages
+                MessagesCard(today)
+            } else {
+                Column(
+                    Modifier.fillMaxSize()
+                ) {
+                    Spacer(Modifier.height(8.dp))
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        Text(
+                            "Error fetching",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        Text(
+                            "Maybe credentials are empty",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
         }
     }
 }
