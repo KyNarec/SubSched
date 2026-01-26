@@ -5,7 +5,7 @@
 
 </div>
 
-**SubSched** is a A Compose Multiplatform app to fetch substitute schedules from [schule-infoportal.de/infoscreen](https://schule-infoportal.de/infoscreen)
+**SubSched** is a Compose Multiplatform app to fetch substitute schedules from [schule-infoportal.de/infoscreen](https://schule-infoportal.de/infoscreen)
 
 ---
 
