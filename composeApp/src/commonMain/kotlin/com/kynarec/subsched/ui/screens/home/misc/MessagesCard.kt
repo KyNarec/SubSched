@@ -1,12 +1,14 @@
 package com.kynarec.subsched.ui.screens.home.misc
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -14,15 +16,36 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kynarec.shared.data.models.Messages
+import kotlinx.coroutines.delay
 
 
 @Composable
-fun MessagesCard(messages: Messages) {
+fun MessagesCard(messages: Messages, autoScroll: Boolean = false) {
     SelectionContainer {
+        val listState = rememberLazyListState()
+
+        LaunchedEffect(messages) {
+            if (messages.messages.isNotEmpty() && autoScroll) {
+                while (true) {
+                    delay(1000L)
+
+                    var continueScrolling = true
+                    while (continueScrolling) {
+                        val result = listState.scrollBy(1f) // pixels per frame
+                        if (result <= 0f) continueScrolling = false
+                        delay(16) //  ~60fps
+                    }
+
+                    delay(2000L)
+                    listState.scrollToItem(0)
+                }
+            }
+        }
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -46,7 +69,7 @@ fun MessagesCard(messages: Messages) {
                 ) {
                     HeaderText("Mitteilungen der Schulleitung", Modifier.fillMaxWidth())
                 }
-                LazyColumn {
+                LazyColumn(state = listState) {
                     itemsIndexed(messages.messages) { index, message ->
                         MessageRow(message)
 

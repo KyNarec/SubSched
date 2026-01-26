@@ -32,6 +32,8 @@ class SubSchedViewModel(
     var password by kSafe.mutableStateOf(defaultValue = "")
 
     var teacherView by kSafe.mutableStateOf(defaultValue = false)
+
+    var autoScroll by kSafe.mutableStateOf(defaultValue = false)
     var refetchPlease by kSafe.mutableStateOf(defaultValue = false)
 
     // UI preferences:
