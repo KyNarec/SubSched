@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -102,6 +103,22 @@ fun Appearance(
                                 scope.launch { viewModel.putTransitionEffect(it) }
                             },
                             labelMapper = { it.label }
+                        )
+                    }
+                }
+                item {
+                    Spacer(Modifier.height(16.dp))
+                }
+                item {
+                    ElevatedCard {
+                        SettingComponentSwitch(
+                            icon = Icons.Default.KeyboardDoubleArrowDown,
+                            title = "Auto scroll",
+                            description = "Automatically scroll through the schedule",
+                            onCheckedChange = {
+                                viewModel.autoScroll = it
+                            },
+                            checked = viewModel.autoScroll,
                         )
                     }
                 }

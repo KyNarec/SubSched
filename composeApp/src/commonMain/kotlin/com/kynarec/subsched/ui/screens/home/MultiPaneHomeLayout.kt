@@ -125,13 +125,14 @@ fun MultiPaneHomeLayout(
                                 Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                                     SubstitutionGrid(
                                         substitutions = day.substitutions,
-                                        date = day.date
+                                        date = day.date,
+                                        autoScroll = viewModel.autoScroll
                                     )
                                 }
                             }
                         }
                         Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                            MessagesCard(schedule.plan.messages)
+                            MessagesCard(schedule.plan.messages, autoScroll = viewModel.autoScroll)
                         }
                     }
                 }
@@ -164,13 +165,14 @@ fun MultiPaneHomeLayout(
                                     Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                                         SubstitutionGrid(
                                             substitutions = day.substitutions,
-                                            date = day.date
+                                            date = day.date,
+                                            autoScroll = viewModel.autoScroll
                                         )
                                     }
                                 }
                             }
                             Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                                MessagesCard(schedule.plan.messages)
+                                MessagesCard(schedule.plan.messages, autoScroll = viewModel.autoScroll)
                             }
                         }
                     }
