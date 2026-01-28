@@ -37,19 +37,19 @@ class SubSchedViewModel(
     var refetchPlease by kSafe.mutableStateOf(defaultValue = false)
 
     // UI preferences:
-    suspend fun putBoolean(key: String, value: Boolean) {
-        kSafe.put(key, value)
+    fun putBoolean(key: String, value: Boolean) {
+        kSafe.putDirect(key, value)
     }
-    suspend fun getBoolean(key: String, default: Boolean): Boolean {
-        return kSafe.get(key, default)
+    fun getBoolean(key: String, default: Boolean): Boolean {
+        return kSafe.getDirect(key, default)
     }
     var darkThemeFlow = kSafe.getFlow(DARK_THEME_KEY, defaultValue = true)
     var darkThemeDefault by kSafe.mutableStateOf(true)
 
     var transitionEffect by kSafe.mutableStateOf(DEFAULT_TRANSITION_EFFECT, TRANSITION_EFFECT_KEY)
     val transitionEffectFlow = kSafe.getFlow(TRANSITION_EFFECT_KEY, DEFAULT_TRANSITION_EFFECT)
-    suspend fun putTransitionEffect(value: TransitionEffect) {
-        kSafe.put(TRANSITION_EFFECT_KEY, value)
+    fun putTransitionEffect(value: TransitionEffect) {
+        kSafe.putDirect(TRANSITION_EFFECT_KEY, value)
     }
 
     fun fetchSchedule() {
