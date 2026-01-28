@@ -27,7 +27,7 @@ Currently there is no official build for MacOS, but you can simply clone the pro
 ```bash
 ./gradlew packageReleaseDistributionForCurrentOS
 ```
-and you will get a .dmg file.
+and you will get a .dmg file
 
 ### Windows
 Download and install SubSched-*.msi from [latest GitHub releases](https://github.com/KyNarec/SubSched/releases/latest)
@@ -37,5 +37,6 @@ Download and install SubSched-*.msi from [latest GitHub releases](https://github
 
 
 ## Acknowledgments
-- [SubstituteSchedule](https://github.com/KyNarec/SubstituteSchedule)
+- [SubstituteSchedule](https://github.com/KyNarec/SubstituteSchedule) A Compose Multiplatform App replacing the need for the "DSBmobile" app.
+- [KSafe](https://github.com/ioannisa/KSafe) Enterprise-Grade Encrypted key-value storage for Kotlin Multiplatform and Native Android with Hardware-Backed Security.
 - Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)...
