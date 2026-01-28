@@ -32,7 +32,6 @@ import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.ui.navigation.TransitionEffect
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentEnumChoice
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentSwitch
-import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,10 +78,10 @@ fun Appearance(
                             title = "Dark theme",
                             description = "Use dark theme",
                             onCheckedChange = {
-                                scope.launch {
+//                                scope.launch {
                                     viewModel.putBoolean(DARK_THEME_KEY, it)
                                     viewModel.darkThemeDefault = it
-                                }
+//                                }
                             },
                             checked = viewModel.darkThemeDefault
                         )
@@ -100,7 +99,8 @@ fun Appearance(
                             enumValues = TransitionEffect.entries,
                             selected = transitionEffectFlow,
                             onValueSelected = {
-                                scope.launch { viewModel.putTransitionEffect(it) }
+                                viewModel.putTransitionEffect(it)
+//                                scope.launch { viewModel.putTransitionEffect(it) }
                             },
                             labelMapper = { it.label }
                         )
