@@ -24,7 +24,8 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_21)
         }
     }
-linuxArm64("linuxArm") {
+
+    linuxArm64("linuxArm") {
         binaries.executable {
             baseName = "SubSched"
             entryPoint = "main"
