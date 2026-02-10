@@ -5,7 +5,7 @@ set -e
 
 # --- Configuration ---
 APP_NAME="SubSched"
-DEB_ARCH="amd64"
+DEB_ARCH="${1:-amd64}" # default amd64
 TOML_FILE="gradle/libs.versions.toml"
 CUSTOM_RESOURCES_DIR="composeApp/packaging/linux"
 #ICON_NAME="${APP_NAME}.png"
