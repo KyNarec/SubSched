@@ -24,12 +24,12 @@ jobs:
       - name: Build ARM64 DEB
         run: |
           docker run --rm --privileged \
-            -v ${{ github.workspace }}:/work \
-            -w /work \
-            --platform linux/arm64 \
-            -e GITHUB_ACTIONS=true \
-            openjdk:21-slim \
-            /bin/bash -c "chmod +x build-custom-deb.sh && ./build-custom-deb.sh arm64"
+          -v ${{ github.workspace }}:/work \
+          -w /work \
+          --platform linux/arm64 \
+          -e GITHUB_ACTIONS=true \
+          eclipse-temurin:21-jdk-jammy \
+          /bin/bash -c "chmod +x build-custom-deb.sh && ./build-custom-deb.sh arm64"
 
       # 3. Upload the resulting ARM64 .deb
       - name: Upload Artifact
