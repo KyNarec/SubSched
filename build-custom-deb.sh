@@ -5,7 +5,7 @@ set -e
 
 # --- Configuration ---
 APP_NAME="SubSched"
-DEB_ARCH="${1:-amd64}" # default amd64
+DEB_ARCH="${1:-amd64}"
 TOML_FILE="gradle/libs.versions.toml"
 CUSTOM_RESOURCES_DIR="composeApp/packaging/linux"
 #ICON_NAME="${APP_NAME}.png"
@@ -31,6 +31,7 @@ echo "  - Found app-version: $VERSION"
 
 
 # 2. Build the basic .deb package with Gradle
+echo "### Target Architecture: $DEB_ARCH"
 echo "### 2. Building the basic DEB package with Gradle..."
 ./gradlew packageReleaseDeb
 
@@ -51,9 +52,14 @@ rm -rf "$WORK_DIR"
 mkdir -p "$WORK_DIR"
 dpkg-deb -R "$ORIGINAL_DEB_PATH" "$WORK_DIR"
 
+# 5. Correct Architecture in Metadata (Crucial for ARM64 builds)
+# The Gradle plugin often defaults the control file to amd64 even in Docker.
+# We force it to match our target DEB_ARCH.
+echo "### 4. Updating package metadata to $DEB_ARCH..."
+sed -i "s/^Architecture: .*/Architecture: $DEB_ARCH/" "$WORK_DIR/DEBIAN/control"
 
 # 5. Inject custom files
-echo "### 4. Injecting custom files..."
+echo "### 5. Injecting custom files..."
 
 # a. Inject .desktop file and replace placeholder
 DESKTOP_TEMPLATE="$CUSTOM_RESOURCES_DIR/$APP_NAME.desktop"
@@ -78,7 +84,7 @@ fi
 FINAL_DEB_NAME="${APP_NAME}_${VERSION}_${DEB_ARCH}_custom.deb"
 FINAL_DEB_PATH="$FINAL_DEB_DIR/$FINAL_DEB_NAME"
 mkdir -p "$FINAL_DEB_DIR"
-echo "### 5. Repacking into final DEB package..."
+echo "### 6. Repacking into final DEB package..."
 
 # The final, correct command to build a warning-free package
 # Option first, then Command, then Arguments.

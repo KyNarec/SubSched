@@ -1,0 +1,39 @@
+name: ARM64 Build
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v0.1.0)'
+        required: true
+        default: 'v0.1.0'
+
+jobs:
+  build-arm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Setup QEMU for ARM64 emulation
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      # 2. Run the build inside an ARM64 container
+      # This ensures the bundled JRE and Skia natives are ARM64, not x64.
+      - name: Build ARM64 DEB
+        run: |
+          docker run --rm --privileged \
+            -v ${{ github.workspace }}:/work \
+            -w /work \
+            --platform linux/arm64 \
+            -e GITHUB_ACTIONS=true \
+            openjdk:21-slim \
+            /bin/bash -c "chmod +x build-custom-deb.sh && ./build-custom-deb.sh arm64"
+
+      # 3. Upload the resulting ARM64 .deb
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: subsched-arm64-deb
+          path: composeApp/build/dist/*.deb
