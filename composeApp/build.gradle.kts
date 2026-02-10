@@ -25,6 +25,13 @@ kotlin {
         }
     }
 
+    linuxArm64("linuxArm") {
+        binaries.executable {
+            baseName = "SubSched"
+            entryPoint = "main"
+        }
+    }
+
     jvm()
     
     sourceSets {

@@ -1,0 +1,33 @@
+name: Raspberry Pi Build
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v0.1.0)'
+        required: true
+        default: 'v0.1.0'
+
+jobs:
+  build-pi-package:
+    runs-on: ubuntu-24.04-arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+
+      - name: Make scripts executable
+        run: chmod +x *.sh
+
+      - name: Build Arm64 DEB
+        run: ./build-custom-deb.sh arm64
+
+#      - name: Convert to Arch ARM
+#        run: ./build-arch-package.sh
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: subsched-pi-builds
+          path: composeApp/build/dist/*
