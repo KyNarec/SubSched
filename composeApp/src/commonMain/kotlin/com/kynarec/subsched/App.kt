@@ -40,11 +40,11 @@ import org.koin.compose.viewmodel.koinViewModel
 fun App(
     windowHandler: WindowHandler? = null
 ) {
-    val viewModel = koinViewModel<SubSchedViewModel>()
-    val darkTheme =
-        if (viewModel.isFirstLaunch) isSystemInDarkTheme() else viewModel.darkThemeFlow.collectAsStateWithLifecycle(
-            true
-        ).value
+    val viewModel: SubSchedViewModel = koinViewModel()
+    viewModel.darkThemeDefault = isSystemInDarkTheme()
+
+    val darkTheme by viewModel.darkThemeFlow.collectAsStateWithLifecycle(viewModel.darkThemeDefault)
+
     viewModel.isFirstLaunch = false
     SubSchedTheme(
         darkTheme = darkTheme
