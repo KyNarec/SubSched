@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.window.WindowState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -46,7 +47,8 @@ fun Navigation(
     navController: NavHostController,
     windowInfo: WindowInfo = rememberWindowInfo(),
     snackBarHostState: SnackbarHostState,
-    viewModel: SubSchedViewModel = koinViewModel()
+    viewModel: SubSchedViewModel = koinViewModel(),
+    windowState: WindowState? = null
 ) {
     val transitionEffect by viewModel.transitionEffectFlow.collectAsStateWithLifecycle(viewModel.transitionEffect)
 
@@ -182,7 +184,7 @@ fun Navigation(
         ) {
             composable<NavRoutes.Settings.Root> {
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
-                    MultiPaneRootLayout(navController = navController)
+                    MultiPaneRootLayout(navController = navController, windowState = windowState)
                 } else {
                     ScreenWithContent(navController) {
                         Root(navController = navController)
@@ -194,7 +196,7 @@ fun Navigation(
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
                     Row(
                     ) {
-                        MultiPaneRootLayout(navController = navController)
+                        MultiPaneRootLayout(navController = navController, windowState = windowState)
                         VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                         Account(
                             navController = navController
@@ -205,13 +207,25 @@ fun Navigation(
                         navController = navController
                     )
                 }
-
             }
 
             composable<NavRoutes.Settings.Appearance> {
-                Appearance(
-                    navController = navController
-                )
+                if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
+                    Row(
+                    ) {
+                        MultiPaneRootLayout(navController = navController, windowState = windowState)
+                        VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Appearance(
+                            navController = navController,
+                            windowState = windowState
+                        )
+                    }
+                } else {
+                    Appearance(
+                        navController = navController,
+                        windowState = windowState
+                    )
+                }
             }
         }
     }

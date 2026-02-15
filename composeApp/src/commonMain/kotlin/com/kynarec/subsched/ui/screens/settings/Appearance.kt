@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kynarec.subsched.DARK_THEME_KEY
@@ -32,6 +35,8 @@ import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.ui.navigation.TransitionEffect
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentEnumChoice
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentSwitch
+import com.kynarec.subsched.util.toggleFullscreen
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +44,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun Appearance(
     viewModel: SubSchedViewModel = koinViewModel(),
     navController: NavController,
+    windowState: WindowState? = null,
     backNavigation: () -> Unit = { navController.popBackStack() }
 ) {
     val scope = rememberCoroutineScope()
@@ -120,6 +126,27 @@ fun Appearance(
                             },
                             checked = viewModel.autoScroll,
                         )
+                    }
+                }
+
+                windowState?.let { state ->
+                    item {
+                        Spacer(Modifier.height(16.dp))
+                    }
+                    item {
+                        ElevatedCard {
+                            SettingComponentSwitch(
+                                icon = Icons.Default.Fullscreen,
+                                title = "Fullscreen",
+                                description = "Toggle fullscreen (tip: press F11 to toggle)",
+                                onCheckedChange = {
+                                    scope.launch {
+                                        state.toggleFullscreen()
+                                    }
+                                },
+                                checked = state.placement == WindowPlacement.Fullscreen,
+                            )
+                        }
                     }
                 }
             }
