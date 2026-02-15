@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.window.WindowState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -39,6 +38,7 @@ import com.kynarec.subsched.ui.screens.settings.Appearance
 import com.kynarec.subsched.ui.screens.settings.Root
 import com.kynarec.subsched.ui.screens.settings.multipane.MultiPaneRootLayout
 import com.kynarec.subsched.ui.screens.tomorrow.TomorrowScreen
+import com.kynarec.subsched.util.WindowHandler
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +48,7 @@ fun Navigation(
     windowInfo: WindowInfo = rememberWindowInfo(),
     snackBarHostState: SnackbarHostState,
     viewModel: SubSchedViewModel = koinViewModel(),
-    windowState: WindowState? = null
+    windowHandler: WindowHandler? = null
 ) {
     val transitionEffect by viewModel.transitionEffectFlow.collectAsStateWithLifecycle(viewModel.transitionEffect)
 
@@ -184,7 +184,7 @@ fun Navigation(
         ) {
             composable<NavRoutes.Settings.Root> {
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
-                    MultiPaneRootLayout(navController = navController, windowState = windowState)
+                    MultiPaneRootLayout(navController = navController, windowHandler = windowHandler)
                 } else {
                     ScreenWithContent(navController) {
                         Root(navController = navController)
@@ -196,7 +196,7 @@ fun Navigation(
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
                     Row(
                     ) {
-                        MultiPaneRootLayout(navController = navController, windowState = windowState)
+                        MultiPaneRootLayout(navController = navController, windowHandler = windowHandler)
                         VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                         Account(
                             navController = navController
@@ -213,17 +213,17 @@ fun Navigation(
                 if (windowInfo.screenWidthInfo is WindowInfo.WindowType.Expanded) {
                     Row(
                     ) {
-                        MultiPaneRootLayout(navController = navController, windowState = windowState)
+                        MultiPaneRootLayout(navController = navController, windowHandler = windowHandler)
                         VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                         Appearance(
                             navController = navController,
-                            windowState = windowState
+                            windowHandler = windowHandler
                         )
                     }
                 } else {
                     Appearance(
                         navController = navController,
-                        windowState = windowState
+                        windowHandler = windowHandler
                     )
                 }
             }

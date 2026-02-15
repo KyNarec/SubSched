@@ -15,3 +15,6 @@ actual fun getAppColorScheme(
 actual fun isSystemInDarkTheme(): Boolean {
     return false
 }
+
+@Composable
+actual fun BindEdgeToEdge(darkTheme: Boolean) {}

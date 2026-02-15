@@ -22,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.WindowState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -33,12 +32,13 @@ import com.kynarec.subsched.ui.navigation.Navigation
 import com.kynarec.subsched.ui.screens.home.misc.WindowInfo
 import com.kynarec.subsched.ui.screens.home.misc.rememberWindowInfo
 import com.kynarec.subsched.ui.theme.SubSchedTheme
+import com.kynarec.subsched.util.WindowHandler
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
 fun App(
-    windowState: WindowState? = null
+    windowHandler: WindowHandler? = null
 ) {
     val viewModel = koinViewModel<SubSchedViewModel>()
     val darkTheme =
@@ -153,7 +153,7 @@ fun App(
         ) { contentPadding ->
             Box(Modifier.fillMaxSize().padding(contentPadding))
             {
-                Navigation(navController, windowInfo = windowInfo, windowState = windowState, snackBarHostState = snackBarHostState)
+                Navigation(navController, windowInfo = windowInfo, windowHandler = windowHandler, snackBarHostState = snackBarHostState)
             }
         }
     }
