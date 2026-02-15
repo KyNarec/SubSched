@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -50,6 +51,7 @@ import kotlinx.serialization.Serializable
 @Composable
 fun MultiPaneRootLayout(
     navController: NavHostController,
+    windowState: WindowState? = null,
 ) {
     Scaffold(
         topBar = {
@@ -155,7 +157,7 @@ fun MultiPaneRootLayout(
                 }
                 composable<InnerNavRoutes.Appearance> {
                     isShowingSubFolder.value = true
-                    Appearance(navController = innerNavController, backNavigation = { innerNavController.navigate(InnerNavRoutes.Root) })
+                    Appearance(navController = innerNavController, windowState = windowState, backNavigation = { innerNavController.navigate(InnerNavRoutes.Root) })
                 }
             }
         }

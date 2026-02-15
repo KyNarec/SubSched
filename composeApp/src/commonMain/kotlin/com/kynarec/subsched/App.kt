@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.WindowState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -36,7 +37,9 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    windowState: WindowState? = null
+) {
     val viewModel = koinViewModel<SubSchedViewModel>()
     val darkTheme =
         if (viewModel.isFirstLaunch) isSystemInDarkTheme() else viewModel.darkThemeFlow.collectAsStateWithLifecycle(
@@ -150,7 +153,7 @@ fun App() {
         ) { contentPadding ->
             Box(Modifier.fillMaxSize().padding(contentPadding))
             {
-                Navigation(navController, windowInfo = windowInfo, snackBarHostState = snackBarHostState)
+                Navigation(navController, windowInfo = windowInfo, windowState = windowState, snackBarHostState = snackBarHostState)
             }
         }
     }
