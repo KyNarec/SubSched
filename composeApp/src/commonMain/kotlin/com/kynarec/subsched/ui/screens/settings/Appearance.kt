@@ -36,6 +36,7 @@ import com.kynarec.subsched.ui.navigation.TransitionEffect
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentEnumChoice
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentSwitch
 import com.kynarec.subsched.util.toggleFullscreen
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -139,7 +140,9 @@ fun Appearance(
                                 title = "Fullscreen",
                                 description = "Toggle fullscreen (tip: press F11 to toggle)",
                                 onCheckedChange = {
-                                    state.toggleFullscreen()
+                                    scope.launch {
+                                        state.toggleFullscreen()
+                                    }
                                 },
                                 checked = state.placement == WindowPlacement.Fullscreen,
                             )
