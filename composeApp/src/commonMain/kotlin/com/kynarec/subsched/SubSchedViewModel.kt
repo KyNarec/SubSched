@@ -43,8 +43,8 @@ class SubSchedViewModel(
     fun getBoolean(key: String, default: Boolean): Boolean {
         return kSafe.getDirect(key, default)
     }
-    var darkThemeFlow = kSafe.getFlow(DARK_THEME_KEY, defaultValue = true)
     var darkThemeDefault by kSafe.mutableStateOf(true)
+    var darkThemeFlow = kSafe.getFlow(DARK_THEME_KEY, defaultValue = darkThemeDefault)
 
     var transitionEffect by kSafe.mutableStateOf(DEFAULT_TRANSITION_EFFECT, TRANSITION_EFFECT_KEY)
     val transitionEffectFlow = kSafe.getFlow(TRANSITION_EFFECT_KEY, DEFAULT_TRANSITION_EFFECT)

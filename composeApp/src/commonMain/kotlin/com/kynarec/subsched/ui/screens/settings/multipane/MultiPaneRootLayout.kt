@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.WindowState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -45,13 +44,14 @@ import com.kynarec.subsched.ui.navigation.NavRoutes
 import com.kynarec.subsched.ui.screens.settings.Account
 import com.kynarec.subsched.ui.screens.settings.Appearance
 import com.kynarec.subsched.ui.screens.settings.misc.SettingsFolder
+import com.kynarec.subsched.util.WindowHandler
 import kotlinx.serialization.Serializable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MultiPaneRootLayout(
     navController: NavHostController,
-    windowState: WindowState? = null,
+    windowHandler: WindowHandler? = null
 ) {
     Scaffold(
         topBar = {
@@ -157,7 +157,7 @@ fun MultiPaneRootLayout(
                 }
                 composable<InnerNavRoutes.Appearance> {
                     isShowingSubFolder.value = true
-                    Appearance(navController = innerNavController, windowState = windowState, backNavigation = { innerNavController.navigate(InnerNavRoutes.Root) })
+                    Appearance(navController = innerNavController, windowHandler = windowHandler, backNavigation = { innerNavController.navigate(InnerNavRoutes.Root) })
                 }
             }
         }

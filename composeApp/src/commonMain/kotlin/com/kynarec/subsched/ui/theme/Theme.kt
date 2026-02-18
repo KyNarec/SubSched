@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 //import androidx.compose.material3.dynamicLightColorScheme
 //import android.os.Build
 import androidx.compose.material3.ColorScheme
+import androidx.compose.runtime.DisposableEffect
 
 //import androidx.compose.ui.platform.LocalContext
 
@@ -289,6 +290,8 @@ fun SubSchedTheme(
     dynamicColor: Boolean = false,
     content: @Composable() () -> Unit
 ) {
+    BindEdgeToEdge(darkTheme)
+
     val colorScheme = getAppColorScheme(
         darkTheme = darkTheme,
         useDynamicColor = dynamicColor
@@ -307,3 +310,6 @@ expect fun getAppColorScheme(darkTheme: Boolean, useDynamicColor: Boolean): Colo
 
 @Composable
 expect fun isSystemInDarkTheme(): Boolean
+
+@Composable
+expect fun BindEdgeToEdge(darkTheme: Boolean)

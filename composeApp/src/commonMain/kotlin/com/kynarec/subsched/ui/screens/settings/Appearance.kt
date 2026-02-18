@@ -26,8 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.WindowPlacement
-import androidx.compose.ui.window.WindowState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kynarec.subsched.DARK_THEME_KEY
@@ -35,7 +33,7 @@ import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.ui.navigation.TransitionEffect
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentEnumChoice
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentSwitch
-import com.kynarec.subsched.util.toggleFullscreen
+import com.kynarec.subsched.util.WindowHandler
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -44,7 +42,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun Appearance(
     viewModel: SubSchedViewModel = koinViewModel(),
     navController: NavController,
-    windowState: WindowState? = null,
+    windowHandler: WindowHandler? = null,
     backNavigation: () -> Unit = { navController.popBackStack() }
 ) {
     val scope = rememberCoroutineScope()
@@ -129,7 +127,7 @@ fun Appearance(
                     }
                 }
 
-                windowState?.let { state ->
+                windowHandler?.let { state ->
                     item {
                         Spacer(Modifier.height(16.dp))
                     }
@@ -144,7 +142,7 @@ fun Appearance(
                                         state.toggleFullscreen()
                                     }
                                 },
-                                checked = state.placement == WindowPlacement.Fullscreen,
+                                checked = state.isFullscreen,
                             )
                         }
                     }

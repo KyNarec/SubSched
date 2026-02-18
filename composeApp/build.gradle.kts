@@ -29,6 +29,7 @@ kotlin {
     
     sourceSets {
         androidMain.dependencies {
+            implementation(libs.material)
             implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.core)
