@@ -10,6 +10,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import com.kynarec.subsched.di.initKoin
 import com.kynarec.subsched.ui.DesktopWindowHandler
 import com.kynarec.subsched.ui.toggleFullscreen
 import kotlinx.coroutines.launch
