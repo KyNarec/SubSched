@@ -1,15 +1,16 @@
-package com.kynarec.subsched
+package com.kynarec.subsched.di
 
 import eu.anifantakis.lib.ksafe.KSafe
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.okhttp.OkHttp
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
 actual val platformModule = module {
-    single { KSafe() }
+    single { KSafe(androidApplication()) }
 
     single {
-        HttpClient(CIO) {
+        HttpClient(OkHttp) {
             expectSuccess = true
         }
     }
