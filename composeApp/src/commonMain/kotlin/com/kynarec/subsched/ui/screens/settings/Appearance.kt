@@ -1,6 +1,7 @@
 package com.kynarec.subsched.ui.screens.settings
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -16,12 +17,18 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kynarec.subsched.DARK_THEME_KEY
+import com.kynarec.subsched.DEFAULT_REFRESH_INTERVAL
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.ui.navigation.TransitionEffect
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentEnumChoice
@@ -47,7 +55,7 @@ fun Appearance(
 ) {
     val scope = rememberCoroutineScope()
     val transitionEffectFlow by viewModel.transitionEffectFlow.collectAsStateWithLifecycle(viewModel.transitionEffect)
-
+    val refreshInterval by viewModel.refreshInterval.collectAsStateWithLifecycle(DEFAULT_REFRESH_INTERVAL)
 
     Scaffold(
         topBar = {
@@ -67,7 +75,8 @@ fun Appearance(
         Box(
             Modifier
                 .fillMaxSize()
-                .padding(contentPadding),
+                .padding(contentPadding)
+                .padding(bottom = 8.dp),
             contentAlignment = Alignment.TopCenter
         )
         {
@@ -147,7 +156,61 @@ fun Appearance(
                         }
                     }
                 }
+
+                item {
+                    Spacer(Modifier.height(16.dp))
+                }
+                item {
+                    ElevatedCard {
+                        val options = listOf(60, 120, 300, 600, 1800, 3600) // in seconds
+                        var slidingIndex by remember { mutableFloatStateOf(refreshInterval.toFloat()) }
+                        var isSliding by remember { mutableStateOf(false) }
+
+                        val selectedIndex = when {
+                            isSliding -> slidingIndex
+                            else -> options.indexOf(refreshInterval).toFloat()
+                        }
+                        Column {
+                            Text("Auto refresh interval",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(16.dp)
+                                )
+                            Slider(
+                                value = selectedIndex,
+                                onValueChange = {
+                                    isSliding = true
+                                    slidingIndex = it
+                                },
+                                onValueChangeFinished = {
+                                    scope.launch {
+                                        viewModel.updateRefreshInterval(options[slidingIndex.toInt()])
+                                        isSliding = false
+                                    }
+                                },
+                                valueRange = 0f..(options.size - 1).toFloat(),
+                                steps = options.size - 2,
+                                modifier = Modifier.padding(start = 16.dp, end = 16.dp,bottom = 16.dp),
+                            )
+
+                            Text(
+                                "Interval: ${options[selectedIndex.toInt()].formatDuration()}",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(start = 16.dp, end = 16.dp,bottom = 16.dp)
+                                    .align(Alignment.Start)
+                            )
+                        }
+                    }
+                }
             }
         }
+    }
+}
+
+fun Int.formatDuration(): String {
+    val hours = this / 3600
+    val minutes = (this % 3600) / 60
+    return when {
+        hours > 0 -> "$hours hours ${if (minutes != 0) "$minutes minutes" else ""}"
+        else -> "$minutes minutes"
     }
 }

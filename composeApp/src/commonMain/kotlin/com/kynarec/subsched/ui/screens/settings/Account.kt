@@ -105,7 +105,8 @@ fun Account(
         Box(
             Modifier
                 .fillMaxSize()
-                .padding(contentPadding),
+                .padding(contentPadding)
+                .padding(bottom = 8.dp),
             contentAlignment = Alignment.TopCenter
         )
         {

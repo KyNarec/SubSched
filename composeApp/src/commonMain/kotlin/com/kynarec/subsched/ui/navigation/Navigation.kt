@@ -152,7 +152,7 @@ fun Navigation(
                     MultiPaneHomeLayout(navController = navController, snackBarHostState = snackBarHostState)
                 } else {
                     ScreenWithContent(navController) {
-                        HomeScreen(navController = navController, snackBarHostState = snackBarHostState)
+                        HomeScreen(snackBarHostState = snackBarHostState)
                     }
                 }
             }

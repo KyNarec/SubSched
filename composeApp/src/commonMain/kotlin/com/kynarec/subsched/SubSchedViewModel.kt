@@ -8,13 +8,21 @@ import com.kynarec.shared.data.parseFullStudentSubstituteSchedule
 import com.kynarec.shared.data.parseFullTeacherSubstituteSchedule
 import com.kynarec.subsched.ui.navigation.TransitionEffect
 import eu.anifantakis.lib.ksafe.compose.mutableStateOf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val DARK_THEME_KEY = "darkTheme"
 const val TRANSITION_EFFECT_KEY = "transitionEffectKey"
 val DEFAULT_TRANSITION_EFFECT = TransitionEffect.SlideHorizontal
+const val DEFAULT_REFRESH_INTERVAL = 120
+const val REFRESH_INTERVAL_KEY = "refreshInterval"
+
 
 class SubSchedViewModel(
     private val repository: SubSchedRepository,
@@ -36,13 +44,19 @@ class SubSchedViewModel(
     var autoScroll by kSafe.mutableStateOf(defaultValue = false)
     var refetchPlease by kSafe.mutableStateOf(defaultValue = false)
 
+    var refreshInterval = kSafe.getFlow(REFRESH_INTERVAL_KEY, defaultValue = DEFAULT_REFRESH_INTERVAL)
+
     // UI preferences:
     fun putBoolean(key: String, value: Boolean) {
         kSafe.putDirect(key, value)
     }
-    fun getBoolean(key: String, default: Boolean): Boolean {
-        return kSafe.getDirect(key, default)
+    fun putInt(key: String, value: Int) {
+        kSafe.putDirect(key, value)
     }
+    suspend fun putIntSuspended(key: String, value: Int) {
+        kSafe.put(key, value)
+    }
+
     var darkThemeDefault by kSafe.mutableStateOf(true)
     var darkThemeFlow = kSafe.getFlow(DARK_THEME_KEY, defaultValue = darkThemeDefault)
 
@@ -62,12 +76,14 @@ class SubSchedViewModel(
             try {
                 when (teacherView) {
                     true -> {
-                        val data = repository.fetchTeacherInfo(
-                            username = username,
-                            password = password,
-                            news = 1.toString(),
-                            days = 5
-                        )
+                        val data = withContext(Dispatchers.IO) {
+                            repository.fetchTeacherInfo(
+                                username = username,
+                                password = password,
+                                news = 1.toString(),
+                                days = 5
+                            )
+                        }
                         if (data.isBlank()) {
                             _state.value = SubState.Error("Invalid credentials")
                             return@launch
@@ -81,12 +97,14 @@ class SubSchedViewModel(
                         _state.value = SubState.Success(parsedData, System.currentTimeMillis())
                     }
                     false -> {
-                        val data = repository.fetchStudentInfo(
-                            username = username,
-                            password = password,
-                            news = 1.toString(),
-                            days = 5
-                        )
+                        val data = withContext(Dispatchers.IO) {
+                            repository.fetchStudentInfo(
+                                username = username,
+                                password = password,
+                                news = 1.toString(),
+                                days = 5
+                            )
+                        }
                         if (data.isBlank()) {
                             _state.value = SubState.Error("Invalid credentials")
                             return@launch
@@ -107,11 +125,46 @@ class SubSchedViewModel(
         }
     }
 
-    fun updateCredentials(user: String, pass: String) {
-        username = user
-        password = pass
+
+    suspend fun updateRefreshInterval(newSeconds: Int) {
+        putIntSuspended(REFRESH_INTERVAL_KEY, newSeconds)
+        stopRefreshLoop()
+        startRefreshLoop()
+    }
+    private var refreshLoopJob: Job? = null
+
+    private fun startRefreshLoop() {
+        if (refreshLoopJob?.isActive == true)
+            return
+
+        refreshLoopJob = viewModelScope.launch(Dispatchers.IO) {
+            while (isActive) {
+                val currentInterval = kSafe.getDirect(REFRESH_INTERVAL_KEY, DEFAULT_REFRESH_INTERVAL)
+
+                if (username.isNotBlank() && password.isNotBlank()) {
+                    println("Fetching schedule... Next refresh in $currentInterval seconds")
+                    fetchSchedule()
+                }
+
+                delay(currentInterval * 1000L)
+            }
+        }
+    }
+
+    private fun stopRefreshLoop() {
+        refreshLoopJob?.cancel()
+    }
+
+    init {
+        startRefreshLoop()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        stopRefreshLoop()
     }
 }
+
 
 sealed class SubState {
     object Loading : SubState()
