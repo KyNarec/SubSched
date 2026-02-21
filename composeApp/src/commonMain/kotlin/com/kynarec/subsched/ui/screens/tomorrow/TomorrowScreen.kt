@@ -36,7 +36,7 @@ fun TomorrowScreen(
         val viewModelState = viewModel.state.collectAsStateWithLifecycle()
         val viewModelLastSuccessfulState = viewModel.lastSuccessfulFetch.collectAsStateWithLifecycle()
 
-        val schedule = viewModelState.value as? SubState.Success
+        val schedule = viewModelLastSuccessfulState.value as? SubState.Success
 
         LaunchedEffect(Unit) {
             val oneMinuteInMillis = 60 * 1000
@@ -57,7 +57,7 @@ fun TomorrowScreen(
         }
 
 
-        if (viewModelState.value == SubState.Loading) {
+        if (viewModelLastSuccessfulState.value == SubState.Loading) {
             Row(
                 Modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,

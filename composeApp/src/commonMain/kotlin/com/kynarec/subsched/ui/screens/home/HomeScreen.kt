@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.SubState
 import com.kynarec.subsched.ui.screens.home.misc.SubstitutionGrid
@@ -27,7 +26,6 @@ import kotlin.time.Clock
 @Composable
 fun HomeScreen(
     viewModel: SubSchedViewModel = koinViewModel(),
-    navController: NavController,
     snackBarHostState: SnackbarHostState
 ) {
     Column(
@@ -38,7 +36,7 @@ fun HomeScreen(
         val viewModelState = viewModel.state.collectAsStateWithLifecycle()
         val viewModelLastSuccessfulState = viewModel.lastSuccessfulFetch.collectAsStateWithLifecycle()
 
-        val schedule = viewModelState.value as? SubState.Success
+        val schedule = viewModelLastSuccessfulState.value as? SubState.Success
 
         LaunchedEffect(Unit) {
             val oneMinuteInMillis = 60 * 1000
@@ -59,7 +57,7 @@ fun HomeScreen(
             }
         }
 
-        if (viewModelState.value == SubState.Loading) {
+        if (viewModelLastSuccessfulState.value == SubState.Loading) {
             Row(
                 Modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,
