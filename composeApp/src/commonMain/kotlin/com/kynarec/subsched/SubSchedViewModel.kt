@@ -24,10 +24,6 @@ val DEFAULT_TRANSITION_EFFECT = TransitionEffect.SlideHorizontal
 const val DEFAULT_REFRESH_INTERVAL = 120
 const val REFRESH_INTERVAL_KEY = "refreshInterval"
 
-const val TEXT_STYLE_KEY = "textStyle"
-
-const val CARD_WIDTH_KEY = "cardWidthKey"
-const val DEFAULT_CARD_WIDTH = 430
 
 const val CARD_SIZE_KEY = "cardSize"
 val DEFAULT_CARD_SIZE = CardSize.ExtraSmall
@@ -53,16 +49,12 @@ class SubSchedViewModel(
     var refetchPlease by kSafe.mutableStateOf(defaultValue = false)
 
     var refreshInterval = kSafe.getFlow(REFRESH_INTERVAL_KEY, defaultValue = DEFAULT_REFRESH_INTERVAL)
-    var cardWidth = kSafe.getFlow(CARD_WIDTH_KEY, defaultValue = DEFAULT_CARD_WIDTH)
-
 
     // UI preferences:
     fun putBoolean(key: String, value: Boolean) {
         kSafe.putDirect(key, value)
     }
-    fun putInt(key: String, value: Int) {
-        kSafe.putDirect(key, value)
-    }
+
     suspend fun putIntSuspended(key: String, value: Int) {
         kSafe.put(key, value)
     }
