@@ -1,11 +1,11 @@
 package com.kynarec.subsched.util
 
-enum class ScrollSpeed(val delay: Long, val pixelsPerFrame: Float) {
-    VerySlow(16, 0.7f),
-    Slow(16, 1f),
-    Medium(16, 1.5f),
-    Fast(8, 2f),
-    VeryFast(8, 2.5f),
+enum class ScrollSpeed(val pixelsPerSecond: Float) {
+    VerySlow(30f),
+    Slow(60f),
+    Medium(100f),
+    Fast(180f),
+    VeryFast(250f),
 ;
     override fun toString(): String {
         return when (this) {

@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,14 +46,30 @@ fun MessagesCard(messages: Messages, autoScroll: Boolean = false, viewModel: Sub
                     delay(1000L)
 
                     var continueScrolling = true
+                    var lastFrameTime = 0L
                     while (continueScrolling) {
-                        val result = listState.scrollBy(scrollSpeed.pixelsPerFrame) // pixels per frame
-                        if (result <= 0f) continueScrolling = false
-                        delay(scrollSpeed.delay) //  ~60fps
+                        val pixelsToScroll = withFrameNanos { frameTimeNanos ->
+                            if (lastFrameTime == 0L) {
+                                lastFrameTime = frameTimeNanos
+                                0f
+                            } else {
+                                val timeDeltaSec = (frameTimeNanos - lastFrameTime) / 1_000_000_000f
+                                lastFrameTime = frameTimeNanos
+
+                                // 60 Pixel/second * 0.016 seconds = ~1 Pixel
+                                scrollSpeed.pixelsPerSecond * timeDeltaSec
+                            }
+                        }
+
+                        if (pixelsToScroll > 0f) {
+                            val consumed = listState.scrollBy(pixelsToScroll)
+                            if (consumed <= 0f) continueScrolling = false
+                        }
                     }
 
                     delay(2000L)
                     listState.scrollToItem(0)
+                    lastFrameTime = 0L
                 }
             }
         }
