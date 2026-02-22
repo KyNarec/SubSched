@@ -8,7 +8,29 @@
 **SubSched** is a Compose Multiplatform app to fetch substitute schedules from [schule-infoportal.de/infoscreen](https://schule-infoportal.de/infoscreen)
 
 ---
+## Preview
+<table>
+  <tr>
+    <td rowspan="3" align="center">
+      <img src="./assets/preview_01.jpg" alt="Picture 1" width="1,080"/>
+    </td>
+    <td align="center">
+      <img src="./assets/preview_02.png" alt="Picture 2" width="1919"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./assets/preview_03.png" alt="Picture 3" width="1918"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="./assets/preview_04.png" alt="Picture 4" width="1920"/>
+    </td>
+  </tr>
+</table>
 
+--- 
 ## Installation
 ### Linux
 #### Ubuntu/Debian/Mint
