@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -52,14 +53,30 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
                     delay(1000L)
 
                     var continueScrolling = true
+                    var lastFrameTime = 0L
                     while (continueScrolling) {
-                        val result = listState.scrollBy(scrollSpeed.pixelsPerFrame) // pixels per frame
-                        if (result <= 0f) continueScrolling = false
-                        delay(scrollSpeed.delay) //  ~60fps
+                        val pixelsToScroll = withFrameNanos { frameTimeNanos ->
+                            if (lastFrameTime == 0L) {
+                                lastFrameTime = frameTimeNanos
+                                0f
+                            } else {
+                                val timeDeltaSec = (frameTimeNanos - lastFrameTime) / 1_000_000_000f
+                                lastFrameTime = frameTimeNanos
+
+                                // 60 Pixel/second * 0.016 seconds = ~1 Pixel
+                                scrollSpeed.pixelsPerSecond * timeDeltaSec
+                            }
+                        }
+
+                        if (pixelsToScroll > 0f) {
+                            val consumed = listState.scrollBy(pixelsToScroll)
+                            if (consumed <= 0f) continueScrolling = false
+                        }
                     }
 
                     delay(2000L)
                     listState.scrollToItem(0)
+                    lastFrameTime = 0L
                 }
             }
         }
@@ -91,7 +108,7 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
 
                 LazyColumn(state = listState) {
                     items(substitutions) { item ->
-                        SubstitutionRow(item)
+                        SubstitutionRow(item, viewModel)
                         HorizontalDivider(
                             color = MaterialTheme.colorScheme.outlineVariant.copy(
                                 alpha = 0.5f
@@ -104,7 +121,7 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
     }
 }
 @Composable
-fun SubstitutionRow(item: Substitution, viewModel: SubSchedViewModel = koinViewModel()) {
+fun SubstitutionRow(item: Substitution, viewModel: SubSchedViewModel) {
     val cardSize = viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE).value
     Row(
         modifier = Modifier
