@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.kynarec.subsched.DEFAULT_CARD_WIDTH
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.SubState
 import com.kynarec.subsched.ui.navigation.NavRoutes
@@ -44,6 +45,7 @@ fun MultiPaneHomeLayout(
     snackBarHostState: SnackbarHostState,
     viewModel: SubSchedViewModel = koinViewModel()
 ) {
+    val cardWidth = viewModel.cardWidth.collectAsStateWithLifecycle(DEFAULT_CARD_WIDTH).value
     Scaffold(
         topBar = {
             TopAppBar(
@@ -105,7 +107,7 @@ fun MultiPaneHomeLayout(
             if (schedule != null) {
                 BoxWithConstraints(Modifier.fillMaxSize().padding(16.dp)) {
                     val availableWidth = maxWidth
-                    val minDayWidth = 430.dp
+                    val minDayWidth = cardWidth.dp
                     val spacing = 16.dp
 
                     val totalSlots = ((availableWidth + spacing) / (minDayWidth + spacing))
@@ -145,7 +147,7 @@ fun MultiPaneHomeLayout(
                     val schedule = (viewModelLastSuccessfulState.value as SubState.Success)
                     BoxWithConstraints(Modifier.fillMaxSize().padding(16.dp)) {
                         val availableWidth = maxWidth
-                        val minDayWidth = 430.dp
+                        val minDayWidth = cardWidth.dp
                         val spacing = 16.dp
 
                         val totalSlots = ((availableWidth + spacing) / (minDayWidth + spacing))

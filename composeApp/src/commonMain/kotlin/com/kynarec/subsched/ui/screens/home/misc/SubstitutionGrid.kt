@@ -22,6 +22,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kynarec.shared.data.models.Substitution
 import kotlinx.coroutines.delay
 
@@ -59,7 +60,7 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(date,
                     modifier = Modifier.padding(8.dp),
-                    style = MaterialTheme.typography.titleMedium
+                    fontSize = 20.sp
                 )
 
                 Row(
@@ -137,7 +138,7 @@ fun HeaderText(text: String, modifier: Modifier) {
         text = text,
         modifier = modifier,
         color = MaterialTheme.colorScheme.onPrimary,
-        style = MaterialTheme.typography.labelLarge,
+        fontSize = 14.sp,
         fontWeight = FontWeight.ExtraBold
     )
 }

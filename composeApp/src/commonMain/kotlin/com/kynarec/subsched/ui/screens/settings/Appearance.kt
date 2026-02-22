@@ -35,7 +35,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.kynarec.subsched.CARD_WIDTH_KEY
 import com.kynarec.subsched.DARK_THEME_KEY
+import com.kynarec.subsched.DEFAULT_CARD_WIDTH
 import com.kynarec.subsched.DEFAULT_REFRESH_INTERVAL
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.ui.navigation.TransitionEffect
@@ -55,7 +57,10 @@ fun Appearance(
 ) {
     val scope = rememberCoroutineScope()
     val transitionEffectFlow by viewModel.transitionEffectFlow.collectAsStateWithLifecycle(viewModel.transitionEffect)
-    val refreshInterval by viewModel.refreshInterval.collectAsStateWithLifecycle(DEFAULT_REFRESH_INTERVAL)
+    val refreshInterval by viewModel.refreshInterval.collectAsStateWithLifecycle(
+        DEFAULT_REFRESH_INTERVAL
+    )
+    val cardWidth by viewModel.cardWidth.collectAsStateWithLifecycle(DEFAULT_CARD_WIDTH)
 
     Scaffold(
         topBar = {
@@ -92,8 +97,8 @@ fun Appearance(
                             description = "Use dark theme",
                             onCheckedChange = {
 //                                scope.launch {
-                                    viewModel.putBoolean(DARK_THEME_KEY, it)
-                                    viewModel.darkThemeDefault = it
+                                viewModel.putBoolean(DARK_THEME_KEY, it)
+                                viewModel.darkThemeDefault = it
 //                                }
                             },
                             checked = viewModel.darkThemeDefault
@@ -171,10 +176,11 @@ fun Appearance(
                             else -> options.indexOf(refreshInterval).toFloat()
                         }
                         Column {
-                            Text("Auto refresh interval",
+                            Text(
+                                "Auto refresh interval",
                                 style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier.padding(16.dp)
-                                )
+                            )
                             Slider(
                                 value = selectedIndex,
                                 onValueChange = {
@@ -189,17 +195,79 @@ fun Appearance(
                                 },
                                 valueRange = 0f..(options.size - 1).toFloat(),
                                 steps = options.size - 2,
-                                modifier = Modifier.padding(start = 16.dp, end = 16.dp,bottom = 16.dp),
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
+                                ),
                             )
 
                             Text(
                                 "Interval: ${options[selectedIndex.toInt()].formatDuration()}",
                                 style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(start = 16.dp, end = 16.dp,bottom = 16.dp)
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
+                                )
                                     .align(Alignment.Start)
                             )
                         }
                     }
+                }
+                item {
+                    Spacer(Modifier.height(16.dp))
+                }
+                item {
+                    ElevatedCard {
+                        val options = listOf(
+                            430,
+                            480,
+                            500,
+                            550,
+                            600,
+                            700
+                        )
+                        var slidingIndex by remember { mutableFloatStateOf(cardWidth.toFloat()) }
+                        var isSliding by remember { mutableStateOf(false) }
+
+                        val selectedIndex = when {
+                            isSliding -> slidingIndex
+                            else -> options.indexOf(cardWidth).toFloat()
+                        }
+                        Column {
+                            Text(
+                                "Card width",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(16.dp)
+                            )
+
+                            Slider(
+                                value = selectedIndex,
+                                onValueChange = {
+                                    isSliding = true
+                                    slidingIndex = it
+                                },
+                                onValueChangeFinished = {
+                                    scope.launch {
+                                        viewModel.putIntSuspended(
+                                            CARD_WIDTH_KEY,
+                                            options[slidingIndex.toInt()]
+                                        )
+                                        isSliding = false
+                                    }
+                                },
+                                valueRange = 0f..(options.size - 1).toFloat(),
+                                steps = options.size - 2,
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
+                                ),
+                            )
+                        }
+                    }
+
                 }
             }
         }
