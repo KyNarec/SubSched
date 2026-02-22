@@ -7,6 +7,7 @@ import com.kynarec.shared.data.models.SubstitutionSchedule
 import com.kynarec.shared.data.parseFullStudentSubstituteSchedule
 import com.kynarec.shared.data.parseFullTeacherSubstituteSchedule
 import com.kynarec.subsched.ui.navigation.TransitionEffect
+import com.kynarec.subsched.util.CardSize
 import eu.anifantakis.lib.ksafe.compose.mutableStateOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -27,6 +28,9 @@ const val TEXT_STYLE_KEY = "textStyle"
 
 const val CARD_WIDTH_KEY = "cardWidthKey"
 const val DEFAULT_CARD_WIDTH = 430
+
+const val CARD_SIZE_KEY = "cardSize"
+val DEFAULT_CARD_SIZE = CardSize.ExtraSmall
 
 class SubSchedViewModel(
     private val repository: SubSchedRepository,
@@ -70,6 +74,11 @@ class SubSchedViewModel(
     val transitionEffectFlow = kSafe.getFlow(TRANSITION_EFFECT_KEY, DEFAULT_TRANSITION_EFFECT)
     fun putTransitionEffect(value: TransitionEffect) {
         kSafe.putDirect(TRANSITION_EFFECT_KEY, value)
+    }
+
+    val cardSizeFlow = kSafe.getFlow(CARD_SIZE_KEY, defaultValue = DEFAULT_CARD_SIZE)
+    suspend fun putCardSize(value: CardSize) {
+        kSafe.put(CARD_SIZE_KEY, value)
     }
 
     fun fetchSchedule() {

@@ -35,14 +35,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.kynarec.subsched.CARD_WIDTH_KEY
 import com.kynarec.subsched.DARK_THEME_KEY
-import com.kynarec.subsched.DEFAULT_CARD_WIDTH
+import com.kynarec.subsched.DEFAULT_CARD_SIZE
 import com.kynarec.subsched.DEFAULT_REFRESH_INTERVAL
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.ui.navigation.TransitionEffect
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentEnumChoice
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentSwitch
+import com.kynarec.subsched.util.CardSize
 import com.kynarec.subsched.util.WindowHandler
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -60,7 +60,7 @@ fun Appearance(
     val refreshInterval by viewModel.refreshInterval.collectAsStateWithLifecycle(
         DEFAULT_REFRESH_INTERVAL
     )
-    val cardWidth by viewModel.cardWidth.collectAsStateWithLifecycle(DEFAULT_CARD_WIDTH)
+    val cardSize by viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE)
 
     Scaffold(
         topBar = {
@@ -220,24 +220,18 @@ fun Appearance(
                 }
                 item {
                     ElevatedCard {
-                        val options = listOf(
-                            430,
-                            480,
-                            500,
-                            550,
-                            600,
-                            700
-                        )
-                        var slidingIndex by remember { mutableFloatStateOf(cardWidth.toFloat()) }
+                        val options = CardSize.entries
+                        var slidingIndex by remember { mutableFloatStateOf(options.indexOf(cardSize).toFloat()) }
                         var isSliding by remember { mutableStateOf(false) }
 
                         val selectedIndex = when {
                             isSliding -> slidingIndex
-                            else -> options.indexOf(cardWidth).toFloat()
+                            else -> options.indexOf(cardSize).toFloat()
                         }
+
                         Column {
                             Text(
-                                "Card width",
+                                "Card size",
                                 style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier.padding(16.dp)
                             )
@@ -250,8 +244,7 @@ fun Appearance(
                                 },
                                 onValueChangeFinished = {
                                     scope.launch {
-                                        viewModel.putIntSuspended(
-                                            CARD_WIDTH_KEY,
+                                        viewModel.putCardSize(
                                             options[slidingIndex.toInt()]
                                         )
                                         isSliding = false
@@ -278,7 +271,7 @@ fun Int.formatDuration(): String {
     val hours = this / 3600
     val minutes = (this % 3600) / 60
     return when {
-        hours > 0 -> "$hours hours ${if (minutes != 0) "$minutes minutes" else ""}"
+        hours > 0 -> "$hours hour${if (hours > 1) "s" else ""} ${if (minutes != 0) "$minutes minutes" else ""}"
         else -> "$minutes minutes"
     }
 }
