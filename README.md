@@ -26,15 +26,22 @@
 ## Installation
 ### Linux
 #### Ubuntu/Debian/Mint
+##### x86
 ```bash
-sudo dpkg -i SubSched_*_amd64_custom.deb
+sudo dpkg -i SubSched_1.1.0_amd64_custom.deb
 ```
+##### ARM
+```bash
+sudo dpkg -i SubSched_1.1.0_arm64_custom.deb
+```
+Tip: use `curl -O https://github.com/KyNarec/SubSched/releases/download/v1.1.0/SubSched_1.1.0_arm64_custom.deb`
+to download the ARM version to your current directory
 #### Arch
 ```bash
-sudo pacman -U SubSched-*.pkg.tar.zst
+sudo pacman -U SubSched-1.1.0-1-x86_64.pkg.tar.zst 
 ```
 ### Android
-Download and install SubSched_v*.apk from [latest GitHub release](https://github.com/KyNarec/SubSched/releases/latest)
+Download and install SubSched_v1.1.0.apk from [latest GitHub release](https://github.com/KyNarec/SubSched/releases/latest)
 
 ### MacOS
 Currently there is no official build for MacOS, but you can simply clone the project, run
@@ -44,7 +51,7 @@ Currently there is no official build for MacOS, but you can simply clone the pro
 and you will get a .dmg file
 
 ### Windows
-Download and install SubSched-*.msi from [latest GitHub releases](https://github.com/KyNarec/SubSched/releases/latest)
+Download and install SubSched-1.1.0.msi from [latest GitHub releases](https://github.com/KyNarec/SubSched/releases/latest)
 
 ---
 

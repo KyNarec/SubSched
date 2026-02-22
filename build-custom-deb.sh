@@ -33,7 +33,7 @@ echo "  - Found app-version: $VERSION"
 # 2. Build the basic .deb package with Gradle
 echo "### Target Architecture: $DEB_ARCH"
 echo "### 2. Building the basic DEB package with Gradle..."
-./gradlew packageReleaseDeb
+./gradlew packageReleaseDeb --no-configuration-cache --info
 
 
 # 3. Find the original .deb file
