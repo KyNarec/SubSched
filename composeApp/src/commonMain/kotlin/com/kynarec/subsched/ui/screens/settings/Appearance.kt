@@ -1,5 +1,6 @@
 package com.kynarec.subsched.ui.screens.settings
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,11 +39,13 @@ import androidx.navigation.NavController
 import com.kynarec.subsched.DARK_THEME_KEY
 import com.kynarec.subsched.DEFAULT_CARD_SIZE
 import com.kynarec.subsched.DEFAULT_REFRESH_INTERVAL
+import com.kynarec.subsched.DEFAULT_SCROLL_SPEED
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.ui.navigation.TransitionEffect
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentEnumChoice
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentSwitch
 import com.kynarec.subsched.util.CardSize
+import com.kynarec.subsched.util.ScrollSpeed
 import com.kynarec.subsched.util.WindowHandler
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -61,6 +64,7 @@ fun Appearance(
         DEFAULT_REFRESH_INTERVAL
     )
     val cardSize by viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE)
+    val scrollSpeed by viewModel.scrollSpeedFlow.collectAsStateWithLifecycle(DEFAULT_SCROLL_SPEED)
 
     Scaffold(
         topBar = {
@@ -128,16 +132,76 @@ fun Appearance(
                     Spacer(Modifier.height(16.dp))
                 }
                 item {
+
                     ElevatedCard {
                         SettingComponentSwitch(
                             icon = Icons.Default.KeyboardDoubleArrowDown,
                             title = "Auto scroll",
-                            description = "Automatically scroll through the schedule",
+                            description = "Automatically scroll through the schedule (only in desktop mode)",
                             onCheckedChange = {
                                 viewModel.autoScroll = it
                             },
                             checked = viewModel.autoScroll,
                         )
+                        AnimatedVisibility(
+                            visible = viewModel.autoScroll,
+
+                        ) {
+                            val options = ScrollSpeed.entries
+                            var slidingIndex by remember {
+                                mutableFloatStateOf(
+                                    options.indexOf(scrollSpeed).toFloat()
+                                )
+                            }
+                            var isSliding by remember { mutableStateOf(false) }
+
+                            val selectedIndex = when {
+                                isSliding -> slidingIndex
+                                else -> options.indexOf(scrollSpeed).toFloat()
+                            }
+
+                            Column {
+                                Text(
+                                    "Scroll speed",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+
+                                Slider(
+                                    value = selectedIndex,
+                                    onValueChange = {
+                                        isSliding = true
+                                        slidingIndex = it
+                                    },
+                                    onValueChangeFinished = {
+                                        scope.launch {
+                                            viewModel.putScrollSpeed(
+                                                options[slidingIndex.toInt()]
+                                            )
+                                            isSliding = false
+                                        }
+                                    },
+                                    valueRange = 0f..(options.size - 1).toFloat(),
+                                    steps = options.size - 2,
+                                    modifier = Modifier.padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        bottom = 16.dp
+                                    ),
+                                )
+
+                                Text(
+                                    options[selectedIndex.toInt()].toString(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        bottom = 16.dp
+                                    )
+                                        .align(Alignment.Start)
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -221,7 +285,11 @@ fun Appearance(
                 item {
                     ElevatedCard {
                         val options = CardSize.entries
-                        var slidingIndex by remember { mutableFloatStateOf(options.indexOf(cardSize).toFloat()) }
+                        var slidingIndex by remember {
+                            mutableFloatStateOf(
+                                options.indexOf(cardSize).toFloat()
+                            )
+                        }
                         var isSliding by remember { mutableStateOf(false) }
 
                         val selectedIndex = when {
@@ -258,9 +326,19 @@ fun Appearance(
                                     bottom = 16.dp
                                 ),
                             )
+
+                            Text(
+                                options[selectedIndex.toInt()].toString(),
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
+                                )
+                                    .align(Alignment.Start)
+                            )
                         }
                     }
-
                 }
             }
         }

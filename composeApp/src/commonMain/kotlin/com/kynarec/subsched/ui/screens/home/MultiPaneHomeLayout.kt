@@ -108,7 +108,7 @@ fun MultiPaneHomeLayout(
                 BoxWithConstraints(Modifier.fillMaxSize().padding(16.dp)) {
                     val availableWidth = maxWidth
                     val minDayWidth = cardSize.width
-                    val spacing = 16.dp
+                    val spacing = 6.dp
 
                     val totalSlots = ((availableWidth + spacing) / (minDayWidth + spacing))
                         .toInt()

@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kynarec.shared.data.models.Substitution
 import com.kynarec.subsched.DEFAULT_CARD_SIZE
+import com.kynarec.subsched.DEFAULT_SCROLL_SPEED
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.util.plus
 import kotlinx.coroutines.delay
@@ -39,18 +41,21 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
     SelectionContainer {
         val listState = rememberLazyListState()
 
-        val cardSize = viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE).value
+        val cardSize by viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE)
+        val scrollSpeed by viewModel.scrollSpeedFlow.collectAsStateWithLifecycle(DEFAULT_SCROLL_SPEED)
+
 
         LaunchedEffect(substitutions) {
+            println(scrollSpeed.toString())
             if (substitutions.isNotEmpty() && autoScroll) {
                 while (true) {
                     delay(1000L)
 
                     var continueScrolling = true
                     while (continueScrolling) {
-                        val result = listState.scrollBy(1f) // pixels per frame
+                        val result = listState.scrollBy(scrollSpeed.pixelsPerFrame) // pixels per frame
                         if (result <= 0f) continueScrolling = false
-                        delay(16) //  ~60fps
+                        delay(scrollSpeed.delay) //  ~60fps
                     }
 
                     delay(2000L)

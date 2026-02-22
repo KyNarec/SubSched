@@ -12,4 +12,15 @@ enum class CardSize(val width: Dp, val defaultFontSize: TextUnit) {
     Large(550.dp, 12.sp),
     ExtraLarge(600.dp, 13.sp),
     TurboLarge(700.dp, 14.sp),
+;
+    override fun toString(): String {
+        return when (this) {
+            ExtraSmall -> "Extra small"
+            Small -> "Small"
+            Medium -> "Medium"
+            Large -> "Large"
+            ExtraLarge -> "Extra large"
+            TurboLarge -> "Turbo large"
+        }
+    }
 }
