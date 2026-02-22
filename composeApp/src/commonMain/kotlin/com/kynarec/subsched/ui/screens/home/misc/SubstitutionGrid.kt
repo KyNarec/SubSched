@@ -21,16 +21,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kynarec.shared.data.models.Substitution
+import com.kynarec.subsched.DEFAULT_CARD_SIZE
+import com.kynarec.subsched.SubSchedViewModel
+import com.kynarec.subsched.util.plus
 import kotlinx.coroutines.delay
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll: Boolean = false) {
+fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll: Boolean = false, viewModel: SubSchedViewModel = koinViewModel()) {
     SelectionContainer {
         val listState = rememberLazyListState()
+
+        val cardSize = viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE).value
 
         LaunchedEffect(substitutions) {
             if (substitutions.isNotEmpty() && autoScroll) {
@@ -59,7 +68,7 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(date,
                     modifier = Modifier.padding(8.dp),
-                    style = MaterialTheme.typography.titleMedium
+                    fontSize = cardSize.defaultFontSize + 8.sp
                 )
 
                 Row(
@@ -68,11 +77,11 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
                         .background(MaterialTheme.colorScheme.primary)
                         .padding(vertical = 12.dp, horizontal = 8.dp)
                 ) {
-                    HeaderText("Std.", Modifier.weight(0.6f))
-                    HeaderText("Kl.", Modifier.weight(0.8f))
-                    HeaderText("Ver.", Modifier.weight(1.2f))
-                    HeaderText("Raum", Modifier.weight(0.8f))
-                    HeaderText("Info", Modifier.weight(1.5f))
+                    HeaderText("Std.", Modifier.weight(0.6f), fontSize = cardSize.defaultFontSize + 6.sp)
+                    HeaderText("Kl.", Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 6.sp)
+                    HeaderText("Ver.", Modifier.weight(1.2f), fontSize = cardSize.defaultFontSize + 6.sp)
+                    HeaderText("Raum", Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 6.sp)
+                    HeaderText("Info", Modifier.weight(1.5f), fontSize = cardSize.defaultFontSize + 6.sp)
                 }
 
                 LazyColumn(state = listState) {
@@ -90,7 +99,8 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
     }
 }
 @Composable
-fun SubstitutionRow(item: Substitution) {
+fun SubstitutionRow(item: Substitution, viewModel: SubSchedViewModel = koinViewModel()) {
+    val cardSize = viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE).value
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -101,43 +111,43 @@ fun SubstitutionRow(item: Substitution) {
         Text(
             text = "${item.lesson}.",
             modifier = Modifier.weight(0.6f),
-            style = MaterialTheme.typography.bodyLarge,
+            fontSize = cardSize.defaultFontSize + 8.sp,
             fontWeight = FontWeight.Bold
         )
 
         // Kl.
-        Text(item.className, Modifier.weight(0.8f), style = MaterialTheme.typography.bodyMedium)
+        Text(item.className, Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 7.sp, )
 
         // Ver.
-        Column(Modifier.weight(1.2f)) {
-            Text(item.subject, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+        Column(Modifier.weight(1.2f).padding(start = 4.dp)) {
+            Text(item.subject, fontSize = cardSize.defaultFontSize + 6.sp, fontWeight = FontWeight.SemiBold)
             Text(
                 text = "${item.absentTeacher.name} ➔ ${item.coveringTeacher.name}",
-                style = MaterialTheme.typography.labelSmall,
+                fontSize = cardSize.defaultFontSize + 5.sp,
                 color = MaterialTheme.colorScheme.secondary
             )
         }
 
         // Raum
-        Text(item.room, Modifier.weight(0.8f), style = MaterialTheme.typography.bodyMedium)
+        Text(item.room, Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 6.sp)
 
         // Info
         Text(
             text = item.info,
             modifier = Modifier.weight(1.5f),
-            style = MaterialTheme.typography.bodySmall,
+            fontSize = cardSize.defaultFontSize + 5.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
 @Composable
-fun HeaderText(text: String, modifier: Modifier) {
+fun HeaderText(text: String, modifier: Modifier, fontSize: TextUnit) {
     Text(
         text = text,
         modifier = modifier,
         color = MaterialTheme.colorScheme.onPrimary,
-        style = MaterialTheme.typography.labelLarge,
+        fontSize = fontSize,
         fontWeight = FontWeight.ExtraBold
     )
 }

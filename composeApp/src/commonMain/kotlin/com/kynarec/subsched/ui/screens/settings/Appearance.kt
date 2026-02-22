@@ -36,11 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kynarec.subsched.DARK_THEME_KEY
+import com.kynarec.subsched.DEFAULT_CARD_SIZE
 import com.kynarec.subsched.DEFAULT_REFRESH_INTERVAL
 import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.ui.navigation.TransitionEffect
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentEnumChoice
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentSwitch
+import com.kynarec.subsched.util.CardSize
 import com.kynarec.subsched.util.WindowHandler
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -55,7 +57,10 @@ fun Appearance(
 ) {
     val scope = rememberCoroutineScope()
     val transitionEffectFlow by viewModel.transitionEffectFlow.collectAsStateWithLifecycle(viewModel.transitionEffect)
-    val refreshInterval by viewModel.refreshInterval.collectAsStateWithLifecycle(DEFAULT_REFRESH_INTERVAL)
+    val refreshInterval by viewModel.refreshInterval.collectAsStateWithLifecycle(
+        DEFAULT_REFRESH_INTERVAL
+    )
+    val cardSize by viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE)
 
     Scaffold(
         topBar = {
@@ -92,8 +97,8 @@ fun Appearance(
                             description = "Use dark theme",
                             onCheckedChange = {
 //                                scope.launch {
-                                    viewModel.putBoolean(DARK_THEME_KEY, it)
-                                    viewModel.darkThemeDefault = it
+                                viewModel.putBoolean(DARK_THEME_KEY, it)
+                                viewModel.darkThemeDefault = it
 //                                }
                             },
                             checked = viewModel.darkThemeDefault
@@ -171,10 +176,11 @@ fun Appearance(
                             else -> options.indexOf(refreshInterval).toFloat()
                         }
                         Column {
-                            Text("Auto refresh interval",
+                            Text(
+                                "Auto refresh interval",
                                 style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier.padding(16.dp)
-                                )
+                            )
                             Slider(
                                 value = selectedIndex,
                                 onValueChange = {
@@ -189,17 +195,72 @@ fun Appearance(
                                 },
                                 valueRange = 0f..(options.size - 1).toFloat(),
                                 steps = options.size - 2,
-                                modifier = Modifier.padding(start = 16.dp, end = 16.dp,bottom = 16.dp),
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
+                                ),
                             )
 
                             Text(
                                 "Interval: ${options[selectedIndex.toInt()].formatDuration()}",
                                 style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(start = 16.dp, end = 16.dp,bottom = 16.dp)
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
+                                )
                                     .align(Alignment.Start)
                             )
                         }
                     }
+                }
+                item {
+                    Spacer(Modifier.height(16.dp))
+                }
+                item {
+                    ElevatedCard {
+                        val options = CardSize.entries
+                        var slidingIndex by remember { mutableFloatStateOf(options.indexOf(cardSize).toFloat()) }
+                        var isSliding by remember { mutableStateOf(false) }
+
+                        val selectedIndex = when {
+                            isSliding -> slidingIndex
+                            else -> options.indexOf(cardSize).toFloat()
+                        }
+
+                        Column {
+                            Text(
+                                "Card size",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(16.dp)
+                            )
+
+                            Slider(
+                                value = selectedIndex,
+                                onValueChange = {
+                                    isSliding = true
+                                    slidingIndex = it
+                                },
+                                onValueChangeFinished = {
+                                    scope.launch {
+                                        viewModel.putCardSize(
+                                            options[slidingIndex.toInt()]
+                                        )
+                                        isSliding = false
+                                    }
+                                },
+                                valueRange = 0f..(options.size - 1).toFloat(),
+                                steps = options.size - 2,
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
+                                ),
+                            )
+                        }
+                    }
+
                 }
             }
         }
@@ -210,7 +271,7 @@ fun Int.formatDuration(): String {
     val hours = this / 3600
     val minutes = (this % 3600) / 60
     return when {
-        hours > 0 -> "$hours hours ${if (minutes != 0) "$minutes minutes" else ""}"
+        hours > 0 -> "$hours hour${if (hours > 1) "s" else ""} ${if (minutes != 0) "$minutes minutes" else ""}"
         else -> "$minutes minutes"
     }
 }

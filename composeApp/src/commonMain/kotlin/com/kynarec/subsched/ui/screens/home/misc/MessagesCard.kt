@@ -20,14 +20,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kynarec.shared.data.models.Messages
+import com.kynarec.subsched.DEFAULT_CARD_SIZE
+import com.kynarec.subsched.SubSchedViewModel
+import com.kynarec.subsched.util.plus
 import kotlinx.coroutines.delay
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
-fun MessagesCard(messages: Messages, autoScroll: Boolean = false) {
+fun MessagesCard(messages: Messages, autoScroll: Boolean = false, viewModel: SubSchedViewModel = koinViewModel()) {
     SelectionContainer {
         val listState = rememberLazyListState()
+        val cardSize = viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE).value
+
 
         LaunchedEffect(messages) {
             if (messages.messages.isNotEmpty() && autoScroll) {
@@ -67,7 +75,7 @@ fun MessagesCard(messages: Messages, autoScroll: Boolean = false) {
                         .background(MaterialTheme.colorScheme.primary)
                         .padding(vertical = 12.dp, horizontal = 8.dp)
                 ) {
-                    HeaderText("Mitteilungen der Schulleitung", Modifier.fillMaxWidth())
+                    HeaderText("Mitteilungen der Schulleitung", Modifier.fillMaxWidth(), fontSize = cardSize.defaultFontSize + 6.sp)
                 }
                 LazyColumn(state = listState) {
                     itemsIndexed(messages.messages) { index, message ->
