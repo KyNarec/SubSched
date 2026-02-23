@@ -27,6 +27,7 @@ import com.kynarec.shared.data.models.Messages
 import com.kynarec.subsched.DEFAULT_CARD_SIZE
 import com.kynarec.subsched.DEFAULT_SCROLL_SPEED
 import com.kynarec.subsched.SubSchedViewModel
+import com.kynarec.subsched.util.CardSize
 import com.kynarec.subsched.util.plus
 import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
@@ -85,7 +86,7 @@ fun MessagesCard(messages: Messages, autoScroll: Boolean = false, viewModel: Sub
                 Text(
                     text = "Nachrichten - ${messages.date}",
                     modifier = Modifier.padding(8.dp),
-                    style = MaterialTheme.typography.titleMedium
+                    fontSize = cardSize.defaultFontSize + 8.sp
                 )
 
                 Row(
@@ -98,7 +99,7 @@ fun MessagesCard(messages: Messages, autoScroll: Boolean = false, viewModel: Sub
                 }
                 LazyColumn(state = listState) {
                     itemsIndexed(messages.messages) { index, message ->
-                        MessageRow(message)
+                        MessageRow(message, cardSize)
 
                         if (index < messages.messages.size - 1) {
                             HorizontalDivider(
@@ -113,7 +114,7 @@ fun MessagesCard(messages: Messages, autoScroll: Boolean = false, viewModel: Sub
 }
 
 @Composable
-fun MessageRow(fullText: String) {
+fun MessageRow(fullText: String, cardSize: CardSize) {
     val lines = fullText.split("\n")
     if (lines.isEmpty()) return
 
@@ -127,7 +128,7 @@ fun MessageRow(fullText: String) {
         if (lines[currentIndex].startsWith("Eintrag")) {
             Text(
                 text = lines[currentIndex],
-                style = MaterialTheme.typography.labelSmall,
+                fontSize = cardSize.defaultFontSize + 5.sp,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
@@ -137,7 +138,7 @@ fun MessageRow(fullText: String) {
         if (currentIndex < lines.size) {
             Text(
                 text = lines[currentIndex],
-                style = MaterialTheme.typography.bodyLarge,
+                fontSize = cardSize.defaultFontSize + 8.sp,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(top = 2.dp, bottom = 8.dp)
             )
@@ -149,7 +150,7 @@ fun MessageRow(fullText: String) {
                 if (line.isNotBlank()) {
                     Text(
                         text = line,
-                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = cardSize.defaultFontSize + 6.sp,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                 }

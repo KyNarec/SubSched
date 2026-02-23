@@ -11,7 +11,7 @@ actual fun rememberWindowInfo(): WindowInfo {
     return WindowInfo(
         screenWidthInfo = when {
             width < 600 -> WindowInfo.WindowType.Compact
-            width < 1081 -> WindowInfo.WindowType.Medium
+            width < 1355 -> WindowInfo.WindowType.Medium
             else -> WindowInfo.WindowType.Expanded
         },
         screenHeightInfo = when {
