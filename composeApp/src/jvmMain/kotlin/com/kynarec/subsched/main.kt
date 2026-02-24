@@ -18,10 +18,13 @@ import org.jetbrains.compose.resources.painterResource
 import subsched.composeapp.generated.resources.Res
 import subsched.composeapp.generated.resources.ic_subsched_logo
 
-fun main() {
+fun main(args: Array<String>) {
     initKoin()
     application {
-        val state = rememberWindowState(placement = WindowPlacement.Maximized)
+        val startFullscreen = args.contains("--start-fullscreen")
+        val state = rememberWindowState(
+            placement = if (startFullscreen) WindowPlacement.Fullscreen else WindowPlacement.Maximized
+        )
         val scope = rememberCoroutineScope()
         Window(
             onCloseRequest = ::exitApplication,
