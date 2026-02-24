@@ -28,20 +28,20 @@
 #### Ubuntu/Debian/Mint
 ##### x86
 ```bash
-sudo dpkg -i SubSched_1.1.1_amd64_custom.deb
+sudo dpkg -i SubSched_1.1.3_amd64_custom.deb
 ```
 ##### ARM
 ```bash
-sudo dpkg -i SubSched_1.1.1_arm64_custom.deb
+sudo dpkg -i SubSched_1.1.3_arm64_custom.deb
 ```
-Tip: use `curl -OL https://github.com/KyNarec/SubSched/releases/download/v1.1.1/SubSched_1.1.1_arm64_custom.deb`
+Tip: use `curl -OL https://github.com/KyNarec/SubSched/releases/download/v1.1.3/SubSched_1.1.3_arm64_custom.deb`
 to download the ARM version to your current directory
 #### Arch
 ```bash
-sudo pacman -U SubSched-1.1.1-1-x86_64.pkg.tar.zst 
+sudo pacman -U SubSched-1.1.1-3-x86_64.pkg.tar.zst 
 ```
 ### Android
-Download and install SubSched_v1.1.1.apk from [latest GitHub release](https://github.com/KyNarec/SubSched/releases/latest)
+Download and install SubSched_v1.1.3.apk from [latest GitHub release](https://github.com/KyNarec/SubSched/releases/latest)
 
 ### MacOS
 Currently there is no official build for MacOS, but you can simply clone the project, run
@@ -51,11 +51,18 @@ Currently there is no official build for MacOS, but you can simply clone the pro
 and you will get a .dmg file
 
 ### Windows
-Download and install SubSched-1.1.1.msi from [latest GitHub releases](https://github.com/KyNarec/SubSched/releases/latest)
+Download and install SubSched-1.1.3.msi from [latest GitHub releases](https://github.com/KyNarec/SubSched/releases/latest)
 
 ---
 
-
+## Usage
+- Ubuntu/Debian/Mint: `/opt/subsched/bin/SubSched`
+- Arch: `subsched`
+```bash
+# Start in fullscreen mode
+subsched --start-fullscreen
+```
+---
 
 ## Acknowledgments
 - [SubstituteSchedule](https://github.com/KyNarec/SubstituteSchedule) A Compose Multiplatform App replacing the need for the "DSBmobile" app.
