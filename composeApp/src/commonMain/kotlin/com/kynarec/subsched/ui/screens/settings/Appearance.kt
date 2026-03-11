@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
+import androidx.compose.material.icons.filled.TextFormat
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kynarec.subsched.DARK_THEME_KEY
+import com.kynarec.subsched.DEFAULT_ADDITIONAL_FONT_SIZE
 import com.kynarec.subsched.DEFAULT_CARD_SIZE
 import com.kynarec.subsched.DEFAULT_REFRESH_INTERVAL
 import com.kynarec.subsched.DEFAULT_SCROLL_SPEED
@@ -44,6 +46,7 @@ import com.kynarec.subsched.SubSchedViewModel
 import com.kynarec.subsched.ui.navigation.TransitionEffect
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentEnumChoice
 import com.kynarec.subsched.ui.screens.settings.misc.SettingComponentSwitch
+import com.kynarec.subsched.util.AdditionalFontSize
 import com.kynarec.subsched.util.CardSize
 import com.kynarec.subsched.util.ScrollSpeed
 import com.kynarec.subsched.util.WindowHandler
@@ -65,6 +68,7 @@ fun Appearance(
     )
     val cardSize by viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE)
     val scrollSpeed by viewModel.scrollSpeedFlow.collectAsStateWithLifecycle(DEFAULT_SCROLL_SPEED)
+    val additionalFontSize by viewModel.additionalFontSizeFlow.collectAsStateWithLifecycle(DEFAULT_ADDITIONAL_FONT_SIZE)
 
     Scaffold(
         topBar = {
@@ -337,6 +341,81 @@ fun Appearance(
                                 )
                                     .align(Alignment.Start)
                             )
+                        }
+                    }
+                }
+
+                item {
+                    Spacer(Modifier.height(16.dp))
+                }
+                item {
+                    ElevatedCard {
+                        SettingComponentSwitch(
+                            icon = Icons.Default.TextFormat,
+                            title = "Additional font size",
+                            description = "Increase font size",
+                            onCheckedChange = {
+                                viewModel.enableAdditionalFontSize = it
+                            },
+                            checked = viewModel.enableAdditionalFontSize,
+                        )
+                        AnimatedVisibility(
+                            visible = viewModel.enableAdditionalFontSize
+                        ) {
+                            val options = AdditionalFontSize.entries
+                            var slidingIndex by remember {
+                                mutableFloatStateOf(
+                                    options.indexOf(additionalFontSize).toFloat()
+                                )
+                            }
+                            var isSliding by remember { mutableStateOf(false) }
+
+                            val selectedIndex = when {
+                                isSliding -> slidingIndex
+                                else -> options.indexOf(additionalFontSize).toFloat()
+                            }
+
+                            Column {
+                                Text(
+                                    "Additional font size",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+
+                                Slider(
+                                    value = selectedIndex,
+                                    onValueChange = {
+                                        isSliding = true
+                                        slidingIndex = it
+                                    },
+                                    onValueChangeFinished = {
+                                        scope.launch {
+                                            viewModel.putAdditionalFontSize(
+                                                options[slidingIndex.toInt()]
+                                            )
+                                            isSliding = false
+                                        }
+                                    },
+                                    valueRange = 0f..(options.size - 1).toFloat(),
+                                    steps = options.size - 2,
+                                    modifier = Modifier.padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        bottom = 16.dp
+                                    ),
+                                )
+
+                                Text(
+                                    options[selectedIndex.toInt()].toString(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        bottom = 16.dp
+                                    )
+                                        .align(Alignment.Start)
+                                )
+                            }
                         }
                     }
                 }

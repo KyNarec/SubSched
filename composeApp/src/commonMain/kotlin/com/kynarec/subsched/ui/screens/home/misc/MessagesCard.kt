@@ -17,13 +17,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kynarec.shared.data.models.Messages
+import com.kynarec.subsched.DEFAULT_ADDITIONAL_FONT_SIZE
 import com.kynarec.subsched.DEFAULT_CARD_SIZE
 import com.kynarec.subsched.DEFAULT_SCROLL_SPEED
 import com.kynarec.subsched.SubSchedViewModel
@@ -39,6 +44,16 @@ fun MessagesCard(messages: Messages, autoScroll: Boolean = false, viewModel: Sub
         val listState = rememberLazyListState()
         val cardSize = viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE).value
         val scrollSpeed = viewModel.scrollSpeedFlow.collectAsStateWithLifecycle(DEFAULT_SCROLL_SPEED).value
+        val viewModelAdditionalFontSize = viewModel.additionalFontSizeFlow.collectAsStateWithLifecycle(
+            DEFAULT_ADDITIONAL_FONT_SIZE
+        ).value.fontSize
+
+        val additionalFontSize by remember {
+            derivedStateOf {
+                if (viewModel.enableAdditionalFontSize) viewModelAdditionalFontSize
+                else 0.sp
+            }
+        }
 
 
         LaunchedEffect(messages) {
@@ -86,7 +101,7 @@ fun MessagesCard(messages: Messages, autoScroll: Boolean = false, viewModel: Sub
                 Text(
                     text = "Nachrichten - ${messages.date}",
                     modifier = Modifier.padding(8.dp),
-                    fontSize = cardSize.defaultFontSize + 8.sp
+                    fontSize = cardSize.defaultFontSize + 8.sp + additionalFontSize
                 )
 
                 Row(
@@ -95,11 +110,11 @@ fun MessagesCard(messages: Messages, autoScroll: Boolean = false, viewModel: Sub
                         .background(MaterialTheme.colorScheme.primary)
                         .padding(vertical = 12.dp, horizontal = 8.dp)
                 ) {
-                    HeaderText("Mitteilungen der Schulleitung", Modifier.fillMaxWidth(), fontSize = cardSize.defaultFontSize + 6.sp)
+                    HeaderText("Mitteilungen der Schulleitung", Modifier.fillMaxWidth(), fontSize = cardSize.defaultFontSize + 6.sp + additionalFontSize)
                 }
                 LazyColumn(state = listState) {
                     itemsIndexed(messages.messages) { index, message ->
-                        MessageRow(message, cardSize)
+                        MessageRow(message, cardSize, additionalFontSize)
 
                         if (index < messages.messages.size - 1) {
                             HorizontalDivider(
@@ -114,7 +129,7 @@ fun MessagesCard(messages: Messages, autoScroll: Boolean = false, viewModel: Sub
 }
 
 @Composable
-fun MessageRow(fullText: String, cardSize: CardSize) {
+fun MessageRow(fullText: String, cardSize: CardSize, additionalFontSize: TextUnit) {
     val lines = fullText.split("\n")
     if (lines.isEmpty()) return
 
@@ -128,7 +143,7 @@ fun MessageRow(fullText: String, cardSize: CardSize) {
         if (lines[currentIndex].startsWith("Eintrag")) {
             Text(
                 text = lines[currentIndex],
-                fontSize = cardSize.defaultFontSize + 5.sp,
+                fontSize = cardSize.defaultFontSize + 5.sp + additionalFontSize,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
@@ -138,7 +153,7 @@ fun MessageRow(fullText: String, cardSize: CardSize) {
         if (currentIndex < lines.size) {
             Text(
                 text = lines[currentIndex],
-                fontSize = cardSize.defaultFontSize + 8.sp,
+                fontSize = cardSize.defaultFontSize + 8.sp + additionalFontSize,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(top = 2.dp, bottom = 8.dp)
             )
@@ -150,7 +165,8 @@ fun MessageRow(fullText: String, cardSize: CardSize) {
                 if (line.isNotBlank()) {
                     Text(
                         text = line,
-                        fontSize = cardSize.defaultFontSize + 6.sp,
+                        fontSize = cardSize.defaultFontSize + 6.sp + additionalFontSize,
+                        lineHeight = cardSize.defaultFontSize + 8.sp + additionalFontSize,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                 }

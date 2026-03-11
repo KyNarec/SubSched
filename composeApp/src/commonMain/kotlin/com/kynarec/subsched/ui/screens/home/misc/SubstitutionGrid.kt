@@ -17,7 +17,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kynarec.shared.data.models.Substitution
+import com.kynarec.subsched.DEFAULT_ADDITIONAL_FONT_SIZE
 import com.kynarec.subsched.DEFAULT_CARD_SIZE
 import com.kynarec.subsched.DEFAULT_SCROLL_SPEED
 import com.kynarec.subsched.SubSchedViewModel
@@ -44,7 +47,16 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
 
         val cardSize by viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE)
         val scrollSpeed by viewModel.scrollSpeedFlow.collectAsStateWithLifecycle(DEFAULT_SCROLL_SPEED)
+        val viewModelAdditionalFontSize = viewModel.additionalFontSizeFlow.collectAsStateWithLifecycle(
+            DEFAULT_ADDITIONAL_FONT_SIZE
+        ).value.fontSize
 
+        val additionalFontSize by remember {
+            derivedStateOf {
+                if (viewModel.enableAdditionalFontSize) viewModelAdditionalFontSize
+                else 0.sp
+            }
+        }
 
         LaunchedEffect(substitutions) {
             println(scrollSpeed.toString())
@@ -90,7 +102,7 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(date,
                     modifier = Modifier.padding(8.dp),
-                    fontSize = cardSize.defaultFontSize + 8.sp
+                    fontSize = cardSize.defaultFontSize + 8.sp + additionalFontSize
                 )
 
                 Row(
@@ -99,11 +111,11 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
                         .background(MaterialTheme.colorScheme.primary)
                         .padding(vertical = 12.dp, horizontal = 8.dp)
                 ) {
-                    HeaderText("Std.", Modifier.weight(0.6f), fontSize = cardSize.defaultFontSize + 6.sp)
-                    HeaderText("Kl.", Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 6.sp)
-                    HeaderText("Ver.", Modifier.weight(1.2f), fontSize = cardSize.defaultFontSize + 6.sp)
-                    HeaderText("Raum", Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 6.sp)
-                    HeaderText("Info", Modifier.weight(1.5f), fontSize = cardSize.defaultFontSize + 6.sp)
+                    HeaderText("Std.", Modifier.weight(0.6f), fontSize = cardSize.defaultFontSize + 6.sp + additionalFontSize)
+                    HeaderText("Kl.", Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 6.sp + additionalFontSize)
+                    HeaderText("Ver.", Modifier.weight(1.2f), fontSize = cardSize.defaultFontSize + 6.sp + additionalFontSize)
+                    HeaderText("Raum", Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 6.sp + additionalFontSize)
+                    HeaderText("Info", Modifier.weight(1.5f), fontSize = cardSize.defaultFontSize + 6.sp + additionalFontSize)
                 }
 
                 LazyColumn(state = listState) {
@@ -123,6 +135,10 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
 @Composable
 fun SubstitutionRow(item: Substitution, viewModel: SubSchedViewModel) {
     val cardSize = viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE).value
+    val additionalFontSize = viewModel.additionalFontSizeFlow.collectAsStateWithLifecycle(
+        DEFAULT_ADDITIONAL_FONT_SIZE
+    ).value.fontSize
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -133,31 +149,31 @@ fun SubstitutionRow(item: Substitution, viewModel: SubSchedViewModel) {
         Text(
             text = "${item.lesson}.",
             modifier = Modifier.weight(0.6f),
-            fontSize = cardSize.defaultFontSize + 8.sp,
+            fontSize = cardSize.defaultFontSize + 8.sp + additionalFontSize,
             fontWeight = FontWeight.Bold
         )
 
         // Kl.
-        Text(item.className, Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 7.sp, )
+        Text(item.className, Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 7.sp + additionalFontSize, )
 
         // Ver.
         Column(Modifier.weight(1.2f).padding(start = 4.dp)) {
             Text(item.subject, fontSize = cardSize.defaultFontSize + 6.sp, fontWeight = FontWeight.SemiBold)
             Text(
                 text = "${item.absentTeacher.name} ➔ ${item.coveringTeacher.name}",
-                fontSize = cardSize.defaultFontSize + 5.sp,
+                fontSize = cardSize.defaultFontSize + 5.sp + additionalFontSize,
                 color = MaterialTheme.colorScheme.secondary
             )
         }
 
         // Raum
-        Text(item.room, Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 6.sp)
+        Text(item.room, Modifier.weight(0.8f), fontSize = cardSize.defaultFontSize + 6.sp + additionalFontSize)
 
         // Info
         Text(
             text = item.info,
             modifier = Modifier.weight(1.5f),
-            fontSize = cardSize.defaultFontSize + 5.sp,
+            fontSize = cardSize.defaultFontSize + 5.sp + additionalFontSize,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }

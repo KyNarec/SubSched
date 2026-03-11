@@ -7,6 +7,7 @@ import com.kynarec.shared.data.models.SubstitutionSchedule
 import com.kynarec.shared.data.parseFullStudentSubstituteSchedule
 import com.kynarec.shared.data.parseFullTeacherSubstituteSchedule
 import com.kynarec.subsched.ui.navigation.TransitionEffect
+import com.kynarec.subsched.util.AdditionalFontSize
 import com.kynarec.subsched.util.CardSize
 import com.kynarec.subsched.util.ScrollSpeed
 import eu.anifantakis.lib.ksafe.compose.mutableStateOf
@@ -28,6 +29,9 @@ const val REFRESH_INTERVAL_KEY = "refreshInterval"
 
 const val CARD_SIZE_KEY = "cardSize"
 val DEFAULT_CARD_SIZE = CardSize.ExtraSmall
+
+const val ADDITIONAL_FONT_SIZE_KEY = "additionalFontSize"
+val DEFAULT_ADDITIONAL_FONT_SIZE = AdditionalFontSize.Small
 
 const val SCROLL_SPEED_KEY = "scrollSpeed"
 val DEFAULT_SCROLL_SPEED = ScrollSpeed.Slow
@@ -75,6 +79,12 @@ class SubSchedViewModel(
     val cardSizeFlow = kSafe.getFlow(CARD_SIZE_KEY, defaultValue = DEFAULT_CARD_SIZE)
     suspend fun putCardSize(value: CardSize) {
         kSafe.put(CARD_SIZE_KEY, value)
+    }
+    var enableAdditionalFontSize by kSafe.mutableStateOf(defaultValue = false)
+
+    val additionalFontSizeFlow = kSafe.getFlow(ADDITIONAL_FONT_SIZE_KEY, defaultValue = DEFAULT_ADDITIONAL_FONT_SIZE)
+    suspend fun putAdditionalFontSize(value: AdditionalFontSize) {
+        kSafe.put(ADDITIONAL_FONT_SIZE_KEY, value)
     }
 
     val scrollSpeedFlow = kSafe.getFlow(SCROLL_SPEED_KEY, defaultValue = DEFAULT_SCROLL_SPEED)
