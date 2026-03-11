@@ -56,6 +56,8 @@ class SubSchedViewModel(
     var autoScroll by kSafe.mutableStateOf(defaultValue = false)
     var refetchPlease by kSafe.mutableStateOf(defaultValue = false)
 
+    var colorEveryOtherLine by kSafe.mutableStateOf(defaultValue = false)
+
     var refreshInterval = kSafe.getFlow(REFRESH_INTERVAL_KEY, defaultValue = DEFAULT_REFRESH_INTERVAL)
 
     // UI preferences:
@@ -80,8 +82,8 @@ class SubSchedViewModel(
     suspend fun putCardSize(value: CardSize) {
         kSafe.put(CARD_SIZE_KEY, value)
     }
-    var enableAdditionalFontSize by kSafe.mutableStateOf(defaultValue = false)
 
+    var enableAdditionalFontSize by kSafe.mutableStateOf(defaultValue = false)
     val additionalFontSizeFlow = kSafe.getFlow(ADDITIONAL_FONT_SIZE_KEY, defaultValue = DEFAULT_ADDITIONAL_FONT_SIZE)
     suspend fun putAdditionalFontSize(value: AdditionalFontSize) {
         kSafe.put(ADDITIONAL_FONT_SIZE_KEY, value)
