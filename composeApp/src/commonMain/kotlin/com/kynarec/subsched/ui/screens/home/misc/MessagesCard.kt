@@ -107,7 +107,7 @@ fun MessagesCard(messages: Messages, autoScroll: Boolean = false, viewModel: Sub
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(vertical = 12.dp, horizontal = 8.dp)
                 ) {
                     HeaderText("Mitteilungen der Schulleitung", Modifier.fillMaxWidth(), fontSize = cardSize.defaultFontSize + 6.sp + additionalFontSize)

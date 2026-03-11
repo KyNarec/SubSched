@@ -2,12 +2,13 @@ package com.kynarec.subsched.ui.screens.home.misc
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Card
@@ -20,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -108,7 +110,7 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primary)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(vertical = 12.dp, horizontal = 8.dp)
                 ) {
                     HeaderText("Std.", Modifier.weight(0.6f), fontSize = cardSize.defaultFontSize + 6.sp + additionalFontSize)
@@ -119,13 +121,28 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
                 }
 
                 LazyColumn(state = listState) {
-                    items(substitutions) { item ->
-                        SubstitutionRow(item, viewModel)
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(
-                                alpha = 0.5f
-                            )
+                    itemsIndexed(substitutions) { index, item ->
+                        val isColored by retain {
+                            derivedStateOf {
+                                if (viewModel.colorEveryOtherLine) {
+                                    index % 2 != 0
+                                } else false
+                            }
+                        }
+                        Box(
+                            Modifier.then(
+                                if (isColored) Modifier.background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f))
+                                else Modifier
+                            ),
                         )
+                        {
+                            SubstitutionRow(item, viewModel, isColored)
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(
+                                    alpha = 0.5f
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -133,7 +150,7 @@ fun SubstitutionGrid(substitutions: List<Substitution>, date: String, autoScroll
     }
 }
 @Composable
-fun SubstitutionRow(item: Substitution, viewModel: SubSchedViewModel) {
+fun SubstitutionRow(item: Substitution, viewModel: SubSchedViewModel, isColored: Boolean) {
     val cardSize = viewModel.cardSizeFlow.collectAsStateWithLifecycle(DEFAULT_CARD_SIZE).value
     val additionalFontSize = viewModel.additionalFontSizeFlow.collectAsStateWithLifecycle(
         DEFAULT_ADDITIONAL_FONT_SIZE
@@ -184,7 +201,6 @@ fun HeaderText(text: String, modifier: Modifier, fontSize: TextUnit) {
     Text(
         text = text,
         modifier = modifier,
-        color = MaterialTheme.colorScheme.onPrimary,
         fontSize = fontSize,
         fontWeight = FontWeight.ExtraBold
     )

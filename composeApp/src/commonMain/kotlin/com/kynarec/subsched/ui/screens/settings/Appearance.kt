@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Fullscreen
+import androidx.compose.material.icons.filled.InvertColors
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.filled.TextFormat
 import androidx.compose.material3.ElevatedCard
@@ -417,6 +418,23 @@ fun Appearance(
                                 )
                             }
                         }
+                    }
+                }
+
+                item {
+                    Spacer(Modifier.height(16.dp))
+                }
+                item {
+                    ElevatedCard {
+                        SettingComponentSwitch(
+                            icon = Icons.Default.InvertColors,
+                            title = "Color every other line",
+                            description = "Colors every other line in the substitution grid",
+                            onCheckedChange = {
+                                viewModel.colorEveryOtherLine = it
+                            },
+                            checked = viewModel.colorEveryOtherLine,
+                        )
                     }
                 }
             }
